@@ -6,8 +6,6 @@ export async function POST(req:Request){
     try {
         const {username,verificationCode} = await req.json()
         const user = await UserModel.findOne({username : username})
-        console.log(username)
-        console.log(user)
 
         if (!user){
             return Response.json({

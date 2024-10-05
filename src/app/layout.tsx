@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,7 +20,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" >
       <body className={inter.className}>
           {children}
-          <Toaster />
+          <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
         </body>
     </html>
   );
