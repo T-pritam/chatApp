@@ -22,7 +22,7 @@ export async function POST(req:Request){
         if (!user){
             return Response.json({
                 status : false,
-                message : "Usernot found"
+                message : "User not found"
             })
         }
         if (!user.isVerified){
@@ -35,9 +35,21 @@ export async function POST(req:Request){
         if (isPasswordCorrect) {
             const token = createToken(user)
             cookieStore.set('auth', token)
+            cookieStore.set({
+                name: 'auth',
+                value: token,
+                path: '/', 
+                httpOnly: true, 
+                maxAge: 60 * 60 * 24, // Expire after 1 day
+              });
             return Response.json({
                 status : true,
                 message : "Login successful"
+            })
+        }else{
+            return Response.json({
+                status : false,
+                message : "Invalid credentials"
             })
         }
     } catch (error) {

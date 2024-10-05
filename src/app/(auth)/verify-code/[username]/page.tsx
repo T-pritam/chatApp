@@ -7,11 +7,13 @@ import {
 } from "@/components/ui/input-otp"
 import { useParams } from "next/navigation"
 import axios,{ AxiosError } from "axios"
-import { toast } from 'react-toastify';
+import { useRouter } from "next/navigation"
+import { toast } from "sonner";
 import ApiResponse from "@/schema/apiResponse"
 
 export default function InputOTPControlled() {
   const params = useParams()
+  const router = useRouter()
   const [value, setValue] = React.useState("")
 
   return (
@@ -41,8 +43,20 @@ export default function InputOTPControlled() {
               username : params.username,
               verificationCode : value
             })
-            console.log(response.data.message)
+            if(response.data.status){
+              toast.success(response.data.message,{
+                position: "bottom-right",
+              })
+              router.push("/signin")
+            }
+            else{
+              toast.error(response.data.message,{
+              position: "bottom-right",
+              duration: 5000,
+            })
+            }
             } catch (error) {
+              console.log("error")
                 const axiosError = error as AxiosError<ApiResponse>;
                 console.log(axiosError.response?.data.message)
                 toast.error(axiosError.response?.data.message)

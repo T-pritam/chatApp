@@ -38,6 +38,8 @@ export async function POST(req : Request){
                 verifyCode,
                 verifyCodeExpiry : expiryDate,
                 isVerified : false,
+                passwordResetToken: "P",
+                passwordResetExpires: expiryDate,
                 messages : []
             })
             await user.save()

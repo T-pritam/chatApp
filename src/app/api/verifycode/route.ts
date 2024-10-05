@@ -5,6 +5,7 @@ export async function POST(req:Request){
     await dbConnect()
     try {
         const {username,verificationCode} = await req.json()
+        console.log(username,verificationCode)
         const user = await UserModel.findOne({username : username})
 
         if (!user){
@@ -22,7 +23,7 @@ export async function POST(req:Request){
             await user.save()
             return Response.json({
                 status : true,
-                message : "Acoount verified successfully"
+                message : "Account verified successfully"
             })
         }else if(!isCodeNotExpired){
             return Response.json({
@@ -32,7 +33,7 @@ export async function POST(req:Request){
         } else {
             return Response.json({
                 status : false,
-                message : "Incorrect verifiacation code"
+                message : "Incorrect verification code"
             })
         }
     } catch (error) {

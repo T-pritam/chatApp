@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import axios from 'axios';
+import { toast } from 'sonner';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -13,27 +15,27 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const response = await axios.post('/api/auth/login',{
+      email,
+      password
+    })
 
-    if (res.ok) {
-      router.push('/home');
+    if (response.data.status) {
+      router.push('/');
     } else {
-      const data = await res.json();
-      setError(data.message);
+      toast.error(response.data.message,{
+        position: "bottom-right"
+      });
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-gray-200 p-6">
       <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-semibold mb-6 text-center">Login</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type="email"
+            type="text"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -50,17 +52,25 @@ export default function Login() {
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+            className="w-full bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
           >
             Login
           </button>
         </form>
-        <p className='mt-4'>
-            Not a member yet?{' '}
-            <Link href="/signup" className="text-blue-600 hover:text-blue-800">
+        <div className='flex justify-between items-center mt-3'>
+          
+          <p>
+            <Link href="/signup" className="text-gray-600 hover:text-gray-700">
+            Forgot Password?
+            </Link>
+          </p>
+          <p>
+            <Link href="/signup" className="text-gray-600 hover:text-gray-700">
               Sign up
             </Link>
           </p>
+          
+        </div>
         {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
       </div>
     </div>
