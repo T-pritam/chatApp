@@ -1,22 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface Message extends Document {
-  content: string;
-  createdAt: Date;
-}
-
-const MessageSchema: Schema<Message> = new mongoose.Schema({
-  content: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
-});
-
 export interface User extends Document {
   username: string;
   email: string;
@@ -26,7 +9,8 @@ export interface User extends Document {
   isVerified: boolean;
   passwordResetToken: string;
   passwordResetExpires: Date;
-  messages: Message[];
+  friends: mongoose.Types.ObjectId[]; // Array of User IDs
+  groups: mongoose.Types.ObjectId[];  // Array of Group IDs
 }
 
 // Updated User schema
@@ -61,13 +45,14 @@ const UserSchema: Schema<User> = new mongoose.Schema({
   },
   passwordResetToken: {
     type: String,
-    required: [true, 'Verify Code Expiry is required'],
+    required: [true, 'Verify Code is required'],
   },
   passwordResetExpires: {
     type: Date,
     required: [true, 'Verify Code Expiry is required'],
   },
-  messages: [MessageSchema],
+  friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  groups: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
 });
 
 const UserModel =

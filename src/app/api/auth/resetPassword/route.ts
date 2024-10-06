@@ -28,7 +28,7 @@ export async function POST(req: Request) {
       const token = createToken(user);
       const hashed = await bcrypt.hash(token,10)
       user.passwordResetToken = hashed
-      user.passwordResetExpires = new Date(Date.now() + 3600)
+      user.passwordResetExpires = new Date(Date.now() + 3600000)
 
       console.log(hashed)
 
@@ -56,5 +56,4 @@ export async function POST(req: Request) {
             message : error
         })
     }
-    
 }

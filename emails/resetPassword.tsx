@@ -22,7 +22,7 @@ const ResetPasswordEmail = ({  username, resetLink }: ForgotPasswordEmailProps) 
               We received a request to reset your password. Click the link below to reset your password:
             </Text>
 
-            <Link href={resetLink} className="text-blue-600 hover:underline">
+            <Link href={`http://localhost:3000/resetPassword/${resetLink}`} className="text-blue-600 hover:underline">
               Reset Your Password
             </Link>
 
