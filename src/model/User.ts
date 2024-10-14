@@ -9,8 +9,9 @@ export interface User extends Document {
   isVerified: boolean;
   passwordResetToken: string;
   passwordResetExpires: Date;
-  friends: mongoose.Types.ObjectId[]; // Array of User IDs
-  groups: mongoose.Types.ObjectId[];  // Array of Group IDs
+  friends: mongoose.Types.ObjectId[]; 
+  groups: mongoose.Types.ObjectId[];  
+  friendRequest: mongoose.Types.ObjectId[];
 }
 
 // Updated User schema
@@ -53,6 +54,7 @@ const UserSchema: Schema<User> = new mongoose.Schema({
   },
   friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   groups: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
+  friendRequest: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
 });
 
 const UserModel =
