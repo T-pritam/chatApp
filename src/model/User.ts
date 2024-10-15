@@ -9,6 +9,7 @@ export interface User extends Document {
   isVerified: boolean;
   passwordResetToken: string;
   passwordResetExpires: Date;
+  about: string;
   friends: mongoose.Types.ObjectId[]; 
   groups: mongoose.Types.ObjectId[];  
   friendRequest: mongoose.Types.ObjectId[];
@@ -43,6 +44,9 @@ const UserSchema: Schema<User> = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false,
+  },
+  about: {
+    type: String,
   },
   passwordResetToken: {
     type: String,

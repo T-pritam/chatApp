@@ -5,6 +5,8 @@ import Options from '@/components/Options';
 import ChatList from '@/components/ChatList';
 import ChatMessage from '@/components/ChatMessage';
 
+import UserDetails from '@/components/UserDetails';
+
 interface RootLayoutProps {
   children: React.ReactNode;
 }
@@ -14,18 +16,18 @@ export default async function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" >
       <body>
       <div className="flex ">
-        <div className="bg-gray-500 w-16 h-screen p-3">
+        <div className="bg-gray-500 w-16 h-screen p-3 ">
           <Options />
         </div>
         
         
-        <div className="bg-gray-700 w-2/5 h-screen p-4">
+        <div className="bg-gray-700 w-2/5 h-screen">
           <ChatList />
         </div>
           
         
         <div className="bg-gray-500 flex-1 h-screen">
-          <ChatMessage />
+          <UserDetails />
         </div>
       </div>
         <ToastProvider />
