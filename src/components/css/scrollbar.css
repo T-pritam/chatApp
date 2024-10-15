@@ -1,0 +1,19 @@
+/* Custom Scrollbar Styles in globals.css */
+.test-scrollbar {
+    overflow-y: scroll;
+    max-height: 200px; /* Example size */
+  }
+  
+  .test-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .test-scrollbar::-webkit-scrollbar-track {
+    background: #f0f0f0;
+  }
+  
+  .test-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
+  

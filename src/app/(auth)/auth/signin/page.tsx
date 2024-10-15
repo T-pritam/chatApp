@@ -91,7 +91,7 @@ export default function Login() {
             </Link>
           </p>
           <p>
-            <Link href="/signup" className="text-gray-600 hover:text-gray-700">
+            <Link href="/auth/signup" className="text-gray-600 hover:text-gray-700">
               Sign up
             </Link>
           </p>

@@ -61,7 +61,7 @@ export default function Signup() {
       })
       if (response.data.status){
         toast.success(response.data.message)
-        router.replace(`/verify-code/${username}`)
+        router.replace(`/auth/verify-code/${username}`)
       }
       else{
         toast.error(response.data.message)
@@ -138,7 +138,7 @@ export default function Signup() {
         </form>
         <p className='mt-6'>
             Already a member?{' '}
-            <Link href="/signin" className="text-gray-600 hover:text-gray-800">
+            <Link href="/auth/signin" className="text-gray-600 hover:text-gray-800">
               Sign in
             </Link>
         </p>

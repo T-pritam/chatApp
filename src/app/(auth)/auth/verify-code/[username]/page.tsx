@@ -17,7 +17,8 @@ export default function InputOTPControlled() {
   const [value, setValue] = React.useState("")
 
   return (
-    <div className="space-y-2 ml-auto mt-40">
+    <div className="space-y-2 flex items-center justify-center h-screen">
+      <div>
       <p className="text-2xl">One-Time Password</p>
       <InputOTP
         maxLength={6}
@@ -25,12 +26,12 @@ export default function InputOTPControlled() {
         onChange={(value) => setValue(value)}
       >
         <InputOTPGroup>
-          <InputOTPSlot index={0} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl rounded focus:outline-none focus:bg-yellow-100"/>
-          <InputOTPSlot index={1} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl rounded focus:outline-none focus:bg-yellow-100"/>
-          <InputOTPSlot index={2} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl rounded focus:outline-none focus:bg-yellow-100"/>
-          <InputOTPSlot index={3} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl rounded focus:outline-none focus:bg-yellow-100"/>
-          <InputOTPSlot index={4} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl rounded focus:outline-none focus:bg-yellow-100"/>
-          <InputOTPSlot index={5} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl rounded focus:outline-none focus:bg-yellow-100"/>
+          <InputOTPSlot index={0} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl focus:outline-none focus:bg-yellow-100"/>
+          <InputOTPSlot index={1} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl focus:outline-none focus:bg-yellow-100"/>
+          <InputOTPSlot index={2} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl focus:outline-none focus:bg-yellow-100"/>
+          <InputOTPSlot index={3} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl focus:outline-none focus:bg-yellow-100"/>
+          <InputOTPSlot index={4} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl focus:outline-none focus:bg-yellow-100"/>
+          <InputOTPSlot index={5} className="w-14 h-14 text-center bg-gray-200 border border-gray-600 text-black-700 text-xl focus:outline-none focus:bg-yellow-100"/>
         </InputOTPGroup>
       </InputOTP>
       
@@ -47,7 +48,7 @@ export default function InputOTPControlled() {
               toast.success(response.data.message,{
                 position: "bottom-right",
               })
-              router.push("/signin")
+              router.push("/auth/signin")
             }
             else{
               toast.error(response.data.message,{
@@ -65,6 +66,7 @@ export default function InputOTPControlled() {
           }}>
           Submit
         </button>
+        </div>
     </div>
   )
 }

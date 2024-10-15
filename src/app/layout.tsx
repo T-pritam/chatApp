@@ -1,39 +1,32 @@
+"use client";
 import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import ToastProvider from '@/components/sonnerProvider';
 import Options from '@/components/Options';
-import ChatList from '@/components/ChatList';
-import ChatMessage from '@/components/ChatMessage';
+import { usePathname } from 'next/navigation';
 
-import UserDetails from '@/components/UserDetails';
 
 interface RootLayoutProps {
   children: React.ReactNode;
 }
 
 export default async function RootLayout({ children }: RootLayoutProps) {
+  const pathname = usePathname();
+  const isAuthRoute = pathname.match('/auth/');
   return (
     <html lang="en" >
       <body>
-      <div className="flex ">
-        <div className="bg-gray-500 w-16 h-screen p-3 ">
-          <Options />
+        { 
+          isAuthRoute ? <div>{children}</div> : <div className="">
+          <div className="bg-gray-500 w-1/16 h-screen p-3 float-left inline-block relative">
+            <Options />
+          </div>
         </div>
-        
-        
-        <div className="bg-gray-700 w-2/5 h-screen">
-          <ChatList />
-        </div>
-          
-        
-        <div className="bg-gray-500 flex-1 h-screen">
-          <UserDetails />
-        </div>
-      </div>
+        }
+      
         <ToastProvider />
           {children}
         </body>
     </html>
   );
 }
-

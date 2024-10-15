@@ -1,13 +1,10 @@
 'use client';
-import { useEffect, useState, useCallback, use } from 'react';
-import Pusher from 'pusher-js';
-import axios from 'axios';
-import { sendMessage } from '@/actions/message-actions';
-import { pusherClient } from '@/lib/pusher';
+
+import { useRouter } from "next/navigation";
 
 const ChatPage = ({ chatId }: { chatId: string }) => {
-
-
+  const router = useRouter();
+  router.push('/chat')
   return (
     <div>
     </div>

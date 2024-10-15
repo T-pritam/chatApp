@@ -1,6 +1,6 @@
 /* ScrollableDiv.css */
 .custom-scrollbar::-webkit-scrollbar {
-    width: 2px;
+    width: 1.5px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb {
