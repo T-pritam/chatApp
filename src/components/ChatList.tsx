@@ -1,16 +1,22 @@
+"use client"
 import React from 'react'
 import { LogOut } from 'lucide-react';
 import { Search } from 'lucide-react';
 import { User } from 'lucide-react';
 import '../components/css/scrollbar.css';
+import { useRouter } from 'next/navigation';
 
 function ChatList() {
+    const router = useRouter()
   return (
     <div className=' border border-gray-500 h-screen overflow-y-scroll scrollbar-thin' >
         <div className='sticky top-0 z-10 bg-gray-700 pb-2 p-4'>
             <div className='flex justify-between'>
                 <p className='text-2xl font-bold text-white'>Chats</p>
-                <LogOut color='#bbb'/>
+                <LogOut color='#bbb' className='cursor-pointer select-bg-red-600' onClick={() => {
+                    localStorage.removeItem('token')
+                    router.push('/auth/signin')
+                }}/>
             </div>  
 
             <div className='mt-6 w-full h-9 bg-gray-500 p-1 pl-4 pr-4 rounded-xl'>

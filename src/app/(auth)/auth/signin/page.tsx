@@ -1,5 +1,6 @@
-'use client';
-
+"use client"
+import { useDispatch } from 'react-redux';
+import { login } from '@/store/userSlice';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -12,24 +13,31 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [isSubmiting, setIsSubmiting] = useState(false);
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+
+  function handleSubmit(e: React.FormEvent){
     e.preventDefault();
     setIsSubmiting(true);
 
-    const response = await axios.post('/api/auth/login',{
+    const response = axios.post('/api/auth/login',{
       email,
       password
+    }).then((response) => response.data)
+    .then((data) => {
+        if (data.status) {
+          localStorage.removeItem('token')
+          localStorage.setItem('token',data?.token)
+          dispatch(login(data?.token))
+          console.log("token",data?.token)
+          router.push('/');
+        } else {
+          setIsSubmiting(false)
+          toast.error(data.message,{
+            position: "bottom-right"
+          });
+        }
     })
-
-    if (response.data.status) {
-      router.push('/');
-    } else {
-      setIsSubmiting(false)
-      toast.error(response.data.message,{
-        position: "bottom-right"
-      });
-    }
   };
 
   return (
