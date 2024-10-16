@@ -1,7 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import jwt from 'jsonwebtoken';
-import { log } from "console";
-import { get } from "http";
 
 interface UserState {
     _id : string,
@@ -24,8 +21,6 @@ export const userSlice = createSlice({
     initialState,
     reducers: {
         login : (state,action) => {
-            const token =localStorage.getItem("token")            
-            console.log(token)
             state._id = action.payload._id
             state.username = action.payload.username
             state.email = action.payload.email

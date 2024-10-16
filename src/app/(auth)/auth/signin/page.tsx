@@ -15,36 +15,31 @@ export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-
-  function handleSubmit(e: React.FormEvent){
-    e.preventDefault();
-    setIsSubmiting(true);
-
-    const response = axios.post('/api/auth/login',{
+  async function handleLogin(){
+    setIsSubmiting(true)
+    const response = await axios.post('/api/auth/login',{
       email,
       password
-    }).then((response) => response.data)
-    .then((data) => {
-        if (data.status) {
-          localStorage.removeItem('token')
-          localStorage.setItem('token',data?.token)
-          dispatch(login(data?.token))
-          console.log("token",data?.token)
-          router.push('/');
-        } else {
-          setIsSubmiting(false)
-          toast.error(data.message,{
-            position: "bottom-right"
-          });
-        }
     })
-  };
+    if (response.data.status) {
+      localStorage.removeItem('token')
+      const token = response.data?.token
+      localStorage.setItem('token',token)
+      dispatch(login(response.data?.user))
+      router.push('/');
+    } else {
+      setIsSubmiting(false)
+      toast.error(response.data.message,{
+        position: "bottom-right"
+      });
+    }
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-200 p-6">
       <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-semibold mb-6 text-center">Login</h1>
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form className="space-y-3">
           <input
             type="text"
             placeholder="Email"
@@ -63,6 +58,7 @@ export default function Login() {
           />
           <button
             type="submit"
+            onClick={() => handleLogin()}
             className="w-full mt-6 bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
             disabled={isSubmiting}
           >
@@ -76,7 +72,7 @@ export default function Login() {
           </button>
 
           <button
-            type="button" onClick={() => window.open('/api/auth/google', '_self')}
+            type="button" onClick={() => handleLogin()}
             className="w-full bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
             disabled={isSubmiting}
           >

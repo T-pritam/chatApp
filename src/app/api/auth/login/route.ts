@@ -34,7 +34,8 @@ export async function POST(req:Request){
             return Response.json({
                 status : true,
                 message : "Login successful",
-                token
+                token,
+                user
             })
         }else{
             return Response.json({
