@@ -1,4 +1,5 @@
 "use client";
+
 import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import ToastProvider from '@/components/sonnerProvider';
@@ -21,9 +22,11 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   
 
   useEffect(() => {
-    if(!localStorage.getItem("token")){
+    const token = localStorage.getItem('token')
+    if(!token){
       router.push("/auth/signin") 
-  }},[])
+    }
+},[])
 
   return (
     <html lang="en" >

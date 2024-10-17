@@ -2,7 +2,6 @@ import jwt from 'jsonwebtoken';
 
 // Create JWT token
 export function createToken(user:any){
-  console.log(jwt.sign({ id: user._id }, "secret", { expiresIn: '5s' }));
   return jwt.sign({ id: user._id }, "secret", { expiresIn: '1d' });
 }
 
