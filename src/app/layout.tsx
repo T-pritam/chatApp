@@ -6,7 +6,7 @@ import Options from '@/components/Options';
 import { usePathname } from 'next/navigation';
 import {store} from "../store/userStore"
 import { Provider } from "react-redux";
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 
@@ -18,12 +18,13 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const isAuthRoute = pathname.match('/auth/');
+  
 
   useEffect(() => {
     if(!localStorage.getItem("token")){
       router.push("/auth/signin") 
-    }
-  },[])
+  }},[])
+
   return (
     <html lang="en" >
       <body>

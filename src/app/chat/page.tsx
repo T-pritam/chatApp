@@ -1,21 +1,46 @@
-"use client"
 
-import React from 'react'
+import React, { useEffect,useState } from 'react'
 import ChatHome from '@/components/ChatHome'
 import ChatMessage from '@/components/ChatMessage'
-import { useSelector } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
+import { login } from '@/store/userSlice'
 import { RootStateType } from '@/store/userStore'
-import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { UserState } from '@/store/userSlice'
+import axios from 'axios'
+
 
 
 function Page() {
-  const [users, setUsers] = useState({})
-  const user = useSelector((state: RootStateType) => state.user);
-  console.log("user : ",user)
+  const dispatch = useDispatch()
+  const users = useSelector((state:RootStateType) => state.user)
+  const router = useRouter()
+  const [user, setUser] = useState({} as UserState)
+  setUser(users)  
+
+  useEffect(() => {
+
+    // async function getUser(token:string){
+    //   const response = await axios.get('/api/getUser?token='+token)
+    //   // if(response.data.status){
+    //   //   dispatch(login(response.data.user))
+    //   // } else {
+    //   //   localStorage.removeItem('token')
+    //   //   router.push('/auth/signin')
+    //   // }
+    // }
+
+    const token = localStorage.getItem('token')
+    if(token && users._id == ""){
+      const userData = axios.get('/api/getUser?token='+token).then((data) => console.log(data))
+    }
+
+  },[])
+  
 
   return (
     <div>
-      <ChatMessage />
+      <ChatMessage/>
     </div>
   )
 }
