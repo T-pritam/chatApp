@@ -11,7 +11,6 @@ import { UserState } from '@/store/userSlice'
 import axios from 'axios'
 
 
-
 function Page() {
   const dispatch = useDispatch()
   const users = useSelector((state:RootStateType) => state.user)

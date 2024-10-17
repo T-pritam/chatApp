@@ -1,15 +1,22 @@
-import ChatList from '@/components/ChatList';
-import Settings from '@/components/Settings';
+
+import { User } from 'lucide-react';
 
 export default async function SettingsPage(){
   return (
-           <div className='flex'>
-            <div className="bg-gray-700 w-2/5 h-screen inline-block relative">
-              <Settings />
+    <div className='overflow-hidden'>
+    <div className='p-4'>
+        <p className='text-2xl font-medium text-[#ddd]'>
+            Settings
+        </p>
+    </div>
+        <div className='flex justify-start p-3 gap-3 hover:bg-gray-500 w-screen'>
+            <User size={'7vw'} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
+            <div className='my-auto'>
+                <p className='text-white text-xl'>John</p>
+                <p className='text-[#ccc] text-sm'>Hello jogn hw are you?</p>
             </div>
-            
-           
-           </div>
+        </div>
+</div>
   );
 }
 

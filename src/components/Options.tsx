@@ -46,18 +46,18 @@ function Options() {
     </div>
 
     
-    <div className="space-y-6">
-      <div onClick={handleSettingBtn}>
-        {
-          settingBtnselect 
-          ? <div>
-            <IoSettingsSharp size={34} color='#ccc' className='mx-auto p-1 rounded-full bg-gray-700 cursor-pointer focus:outline-none'/>
-          </div>
-          : <IoSettingsOutline size={34} stroke='#bbb' className='mx-auto pd-2 cursor-pointer focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50' onClick={() => router.push('/profile/settings')}/>
-        }
+      <div className="space-y-6">
+        <div onClick={handleSettingBtn}>
+          {
+            settingBtnselect 
+            ? <div>
+              <IoSettingsSharp size={34} color='#ccc' className='mx-auto p-1 rounded-full bg-gray-700 cursor-pointer focus:outline-none'/>
+            </div>
+            : <IoSettingsOutline size={34} stroke='#bbb' className='mx-auto pd-2 cursor-pointer focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50' onClick={() => router.push('/profile/settings')}/>
+          }
+        </div>
+        <User size={34} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-700 cursor-pointer' onClick={() => router.push('/profile/details')}/>
       </div>
-      <User size={34} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-700 cursor-pointer'/>
-    </div>
 
       </div>    
     </div>

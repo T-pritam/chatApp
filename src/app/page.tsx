@@ -1,12 +1,37 @@
 'use client';
 
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { login } from "@/store/userSlice";
+import { useEffect } from "react";
+import axios from "axios";
 
 const ChatPage = ({ chatId }: { chatId: string }) => {
   const router = useRouter();
-  router.push('/chat')
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function getUser(token:string){
+      const response = await axios.get('/api/getUser?token='+token)
+      if(response.data.status){
+        dispatch(login(response.data.user))
+        router.push('/chat')
+      } else {
+        localStorage.removeItem('token')
+        router.push('/auth/signin')
+      }
+    }
+    const token = localStorage.getItem('token')
+    if (token){
+      getUser(token)
+    } else {
+      router.push('/auth/signin')
+    }
+  },[])
+
   return (
     <div>
+      
     </div>
   );
 };

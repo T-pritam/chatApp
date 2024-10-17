@@ -22,11 +22,12 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   
 
   useEffect(() => {
+    
     const token = localStorage.getItem('token')
     if(!token){
       router.push("/auth/signin") 
     }
-},[])
+  },[])
 
   return (
     <html lang="en" >
