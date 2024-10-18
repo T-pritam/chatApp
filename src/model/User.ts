@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface User extends Document {
+export interface UserType extends Document {
   username: string;
   email: string;
   password: string;
@@ -13,10 +13,10 @@ export interface User extends Document {
   friends: mongoose.Types.ObjectId[]; 
   groups: mongoose.Types.ObjectId[];  
   friendRequest: mongoose.Types.ObjectId[];
+  friendRequestReceived: mongoose.Types.ObjectId[];
 }
 
-// Updated User schema
-const UserSchema: Schema<User> = new mongoose.Schema({
+const UserSchema: Schema<UserType> = new mongoose.Schema({
   username: {
     type: String,
     required: [true, 'Username is required'],
@@ -58,11 +58,12 @@ const UserSchema: Schema<User> = new mongoose.Schema({
   },
   friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   groups: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
-  friendRequest: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
+  friendRequest: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  friendRequestReceived: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 });
 
 const UserModel =
-  (mongoose.models.User as mongoose.Model<User>) ||
-  mongoose.model<User>('User', UserSchema);
+  (mongoose.models.User as mongoose.Model<UserType>) ||
+  mongoose.model<UserType>('User', UserSchema);
 
 export default UserModel;

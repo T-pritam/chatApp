@@ -40,7 +40,7 @@ function Options() {
         }
       </div>
 
-        <FaUserFriends size={36} color='#bbb' className='cursor-pointer' />
+        <FaUserFriends size={36} color='#bbb' className='cursor-pointer' onClick={() => router.push('/friends')} />
         <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
         <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
         <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
