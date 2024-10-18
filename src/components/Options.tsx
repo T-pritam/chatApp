@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { BiSolidMessageAltDetail } from "react-icons/bi";
 import { BiMessageAltDetail } from "react-icons/bi";
+import { FaUserFriends } from "react-icons/fa";
 
 function Options() {
   const router = useRouter()
@@ -39,7 +40,7 @@ function Options() {
         }
       </div>
 
-        <MessageSquareMore size={26} stroke='#bbb' className='mx-auto cursor-pointer'/>
+        <FaUserFriends size={36} color='#bbb' className='cursor-pointer' />
         <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
         <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
         <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>

@@ -33,7 +33,7 @@ export default function Signup() {
         setIsCheckingUser(true);
         setUsernameMessage('');
         try {
-          const respose = await axios.get(`/api/checkusername?username=${debouncedUsername}`)
+          const respose = await axios.get(`/api/user/checkusername?username=${debouncedUsername}`)
           setUsernameMessage(respose.data.message)
         } catch (error) {
           const axiosError = error as AxiosError<ApiResponse>;

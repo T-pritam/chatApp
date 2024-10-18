@@ -12,7 +12,7 @@ const ChatPage = ({ chatId }: { chatId: string }) => {
 
   useEffect(() => {
     async function getUser(token:string){
-      const response = await axios.get('/api/getUser?token='+token)
+      const response = await axios.get('/api/user/getUser?token='+token)
       if(response.data.status){
         dispatch(login(response.data.user))
         router.push('/chat')

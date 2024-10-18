@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { stat } from "fs";
 
 export interface UserState {
     _id : string,
@@ -31,6 +32,12 @@ export const userSlice = createSlice({
             localStorage.removeItem("token")
             state = initialState
         },
+        updateUsername : (state,action) => {
+            state.username = action.payload.username
+        },
+        updateAbout : (state,action) => {
+            state.about = action.payload.about
+        }
         // retriveUser : (state,action) => {
         //     const token = localStorage.getItem("token")
         //     if(token){
@@ -43,5 +50,5 @@ export const userSlice = createSlice({
     }
 });
 
-export const {login,logout} = userSlice.actions
+export const {login,logout,updateUsername,updateAbout} = userSlice.actions
 export default userSlice.reducer
