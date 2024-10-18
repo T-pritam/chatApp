@@ -1,28 +1,29 @@
 "use client"
 
-import React from 'react'
-import { useSelector } from 'react-redux'
-import { RootStateType } from '@/store/userStore'
-import { useState,useEffect } from 'react'
-import axios from 'axios'
-import { UserType } from '@/model/User'
 import { User } from 'lucide-react';
+import '@/components/css/scrollbar.css';
+import { useEffect,useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootStateType } from '@/store/userStore';
+import { UserType } from '@/model/User';
+import axios from 'axios';
+import { get } from 'http';
 
-function Friends() {
+function Sendreq() {
     const user = useSelector((state:RootStateType) => state.user)
-    const [fetchedUser,setFetchedUser] = useState<UserType[]>([])
+    const [fetchedUser,setFetchedUser] = useState<UserType[]>([])  ;
     useEffect(() => {
-        async function getFriends() {
-            const users = await axios.get(`/api/friends?id=${user._id}`)
-            console.log(users.data)
+        async function getRequests() {
+            const users = await axios.get(`/api/friends/request?id=${user._id}`)
             if(users.data.status) {
-                setFetchedUser(users.data.user.friends)        
+                setFetchedUser(users.data.user.friendRequestReceived)        
             } else {
 
             }
         }
-        getFriends()
+        getRequests()
     },[])
+
   return (
     <div>
         {
@@ -39,9 +40,8 @@ function Friends() {
                 </div>
             ))
         } 
-        
     </div>
   )
 }
 
-export default Friends
+export default Sendreq
