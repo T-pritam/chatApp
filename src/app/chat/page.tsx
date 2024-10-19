@@ -7,7 +7,7 @@ import { useSelector,useDispatch } from 'react-redux'
 import { login } from '@/store/userSlice'
 import { RootStateType } from '@/store/userStore'
 import { useRouter } from 'next/navigation'
-import { setFriends,setFriendsRequest,setFriendsRequestReceived } from '@/store/frinedsSlice'
+import { setFriends,setFriendsRequest,setFriendsRequestReceived,setFriendsRequestSent } from '@/store/frinedsSlice'
 import axios from 'axios'
 
 
@@ -27,8 +27,9 @@ function Page() {
         console.log(friends.data.user)
         dispatch(setFriends(friends.data.user.friends))
         const friendsRequest = await axios.get(`/api/friends/add?id=${response.data.user._id}`)
-        console.log(friendsRequest.data)
         dispatch(setFriendsRequest(friendsRequest.data.users))
+        dispatch(setFriendsRequestSent(friendsRequest.data.sendReq))
+        console.log(friendsRequest.data)
         const friendsRequestReceived = await axios.get(`/api/friends/request?id=${response.data.user._id}`)
         dispatch(setFriendsRequestReceived(friendsRequestReceived.data.user.friendRequestReceived))        
       } else {

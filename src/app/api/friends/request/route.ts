@@ -12,9 +12,7 @@ export async function GET(req: Request) {
                 path:"friendRequestReceived",
                 select : '-password',
             }).select("-password")
-            const count = user?.friendRequestReceived.length
-            console.log("friendRequestReceived : ",user?.friendRequestReceived)
-            return Response.json({ status: true, data: "Friends fetched successfully", user, count })
+            return Response.json({ status: true, data: "Friends fetched successfully", user })
         
     } catch (error) {
         console.log(error)

@@ -5,12 +5,14 @@ export interface friendsState {
     friends: UserState[],
     friendsRequest: UserState[],
     friendsRequestReceived: UserState[],
+    friendsRequestSent: UserState[]
 }
 
 const initialState: friendsState = {
     friends: [],
     friendsRequest: [],
-    friendsRequestReceived: []
+    friendsRequestReceived: [],
+    friendsRequestSent: []
 }
 
 export const friendsSlice = createSlice({
@@ -26,17 +28,35 @@ export const friendsSlice = createSlice({
         setFriendsRequestReceived: (state, action) => {
             state.friendsRequestReceived = action.payload
         },
+        setFriendsRequestSent: (state, action) => {
+            state.friendsRequestSent = action.payload
+        },
         updateFriends: (state, action) => {
             state.friends = [...state.friends, action.payload]
         },
-        updateFriendsRequest: (state, action) => {
+        removeFriendsRequest: (state, action) => {
             state.friendsRequest = state.friendsRequest.filter((user) => user._id !== action.payload._id)
         },
-        updateFriendsRequestReceived: (state, action) => {
+        addFriendsRequest: (state, action) => {
+            state.friendsRequest = [...state.friendsRequest, action.payload]  
+        },
+        addFriendsRequestSent: (state, action) => {
+            state.friendsRequestSent = [...state.friendsRequestSent, action.payload]
+        },
+        removeFriendsRequestSent: (state, action) => {
+            state.friendsRequestSent = state.friendsRequestSent.filter((user) => user._id !== action.payload._id)
+        },
+        addFriendsRequestReceived: (state, action) => {
             state.friendsRequestReceived = [...state.friendsRequestReceived, action.payload]
         },
+        removeFriendsRequestReceived: (state, action) => {
+            state.friendsRequestReceived = state.friendsRequestReceived.filter((user) => user._id !== action.payload._id)
+        }
     },
 })
 
-export const { setFriends, setFriendsRequest, setFriendsRequestReceived, updateFriends, updateFriendsRequest, updateFriendsRequestReceived } = friendsSlice.actions
+export const { setFriends, setFriendsRequest, setFriendsRequestReceived, updateFriends, setFriendsRequestSent,
+    removeFriendsRequest, addFriendsRequest, addFriendsRequestReceived, removeFriendsRequestReceived,
+    addFriendsRequestSent, removeFriendsRequestSent
+ } = friendsSlice.actions
 export default friendsSlice.reducer

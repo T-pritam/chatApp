@@ -12,19 +12,14 @@ import { set } from 'mongoose'
 function Friends() {
     const user = useSelector((state:RootStateType) => state.user)
     const friends = useSelector((state:RootStateType) => state.friends)
-    const [fetchedUser,setFetchedUser] = useState<UserType[]>([])
-    const [count,setCount] = useState(0)
-    useEffect(() => {
-        setFetchedUser(friends.friends as UserType[])
-        setCount(friends.friends.length)
-    },[])
+    
 
   return (
     <div>
         {
-            count == 0 
+            friends.friends.length == 0 
             ? <p className='text-[#aaa] text-xl my-auto text-center mt-24'>No Friends</p>
-            : fetchedUser.map((users) => (
+            : friends.friends.map((users) => (
                 <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
                     <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
                     <div className='flex w-11/12 justify-between'>

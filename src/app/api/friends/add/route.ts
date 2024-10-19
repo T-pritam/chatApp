@@ -6,6 +6,7 @@ export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const id = searchParams.get("id");
+        console.log("id : " , id);
         const user = await UserModel.findById(id);
 
         if (!user){
@@ -14,17 +15,23 @@ export async function GET(req: Request) {
                 message: "User not found",
             });
         }
+        const idsToExclude = [...user.friendRequest, ...user.friendRequestReceived, ...user.friends];
         const usersToShow = await UserModel.find({
             _id: { 
                 $ne: id,
-                $nin: [user.friendRequest, user.friendRequestReceived, user.friends],
+                $nin: idsToExclude,
             }
           });        
-        console.log("usersToShow : " , usersToShow);
+        const sendReq = await UserModel.find({
+            _id: { 
+                $in: user.friendRequest
+            }
+        })
         return Response.json({
             status: true,
             message: "Users fetched successfully",
             users: usersToShow,
+            sendReq
         })
     } catch (error) {
         console.log(error);
@@ -38,7 +45,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     await dbConnect();
     try {
-        const { sender, reciever } = await req.json();
+        const { sender, reciever, send } = await req.json();
         const senderUser = await UserModel.findById(sender);
         const recieverUser = await UserModel.findById(reciever);
         if (!senderUser || !recieverUser) {
@@ -47,15 +54,29 @@ export async function POST(req: Request) {
                 message: "Sender or reciever not found",
             });
         }
-        console.log(senderUser, recieverUser);
-        senderUser.friendRequest.push(reciever);
-        recieverUser.friendRequestReceived.push(sender);
-        senderUser.save();
-        recieverUser.save();
-        return Response.json({
-            status: true,
-            message: "Friend request sent successfully",
-        });
+        if (send) {
+            senderUser.friendRequest.push(reciever);
+            recieverUser.friendRequestReceived.push(sender);
+            senderUser.save();
+            recieverUser.save();
+            return Response.json({
+                status: true,
+                message: "Friend request sent successfully",
+            });
+        } else {
+            await UserModel.updateOne(
+                { _id: sender },
+                { $pull: { friendRequest: recieverUser._id } }
+            );
+            await UserModel.updateOne(
+                { _id: reciever },
+                { $pull: { friendRequestReceived: senderUser._id } }
+            );
+            return Response.json({
+                status: true,
+                message: "Friend request removed successfully",
+            });
+        }
     } catch (error) {
         console.log(error);
         return Response.json({
