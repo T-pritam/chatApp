@@ -15,10 +15,12 @@ export async function GET(req: Request) {
             });
         }
         const usersToShow = await UserModel.find({
-            _id: { $ne: id,
-                $nin: user.friendRequest
-             }
+            _id: { 
+                $ne: id,
+                $nin: [user.friendRequest, user.friendRequestReceived, user.friends],
+            }
           });        
+        console.log("usersToShow : " , usersToShow);
         return Response.json({
             status: true,
             message: "Users fetched successfully",

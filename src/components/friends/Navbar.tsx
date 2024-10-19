@@ -15,33 +15,19 @@ import FriendRequest from './friendRequest';
 import { UserType } from '@/model/User';
 import axios from 'axios';
 
+
 function Navbar() {
     const router = useRouter()
     const [friendsBtn,setFriendsBtn] = useState(true)
     const [requestBtn,setRequestBtn] = useState(false)
     const [sendReqBtn,setSendReqBtn] = useState(false)
     const user = useSelector((state:RootStateType) => state.user)
+    const friends = useSelector((state:RootStateType) => state.friends)
+    console.log(friends)
+    
     const [fetchedUser,setFetchedUser] = useState<UserType[]>([])  ;
 
     useEffect(() => {
-        async function getFriends() {
-            const users = await axios.get(`/api/friendReq?id=${user._id}`)
-            if(users.data.status) {
-                setFetchedUser(users.data.users)        
-            }
-        }
-        async function getRequest() {
-            const users = await axios.get('/api/friendReq?id='+user._id)
-            if(users.data.status) {
-                setFetchedUser(users.data.users)        
-            }
-        }
-        // async function sendRequests() {
-        //     const users = await axios.get('/api/friendReq?id='+user._id)
-        //     if(users.data.status) {
-        //         setFetchedUser(users.data.users)        
-        //     }
-        // }
         if(localStorage.getItem('token') && user._id!= "") {
             
         } else {
@@ -82,16 +68,18 @@ function Navbar() {
                 }}>Send Request</button>
             </div>
         </div>
-
-            {
-                friendsBtn && <Friends />
-            }
-            {
-                requestBtn && <FriendRequest />
-            }
-            {
-                sendReqBtn && <Sendreq />
-            }
+        <div> 
+            
+                {
+                    friendsBtn && <Friends />
+                }
+                {
+                    requestBtn && <FriendRequest />
+                }
+                {
+                    sendReqBtn && <Sendreq />
+                }
+        </div>
     </div>
   )
 }

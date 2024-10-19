@@ -7,26 +7,24 @@ import { useState,useEffect } from 'react'
 import axios from 'axios'
 import { UserType } from '@/model/User'
 import { User } from 'lucide-react';
+import { set } from 'mongoose'
 
 function Friends() {
     const user = useSelector((state:RootStateType) => state.user)
+    const friends = useSelector((state:RootStateType) => state.friends)
     const [fetchedUser,setFetchedUser] = useState<UserType[]>([])
+    const [count,setCount] = useState(0)
     useEffect(() => {
-        async function getFriends() {
-            const users = await axios.get(`/api/friends?id=${user._id}`)
-            console.log(users.data)
-            if(users.data.status) {
-                setFetchedUser(users.data.user.friends)        
-            } else {
-
-            }
-        }
-        getFriends()
+        setFetchedUser(friends.friends as UserType[])
+        setCount(friends.friends.length)
     },[])
+
   return (
     <div>
         {
-            fetchedUser.map((users) => (
+            count == 0 
+            ? <p className='text-[#aaa] text-xl my-auto text-center mt-24'>No Friends</p>
+            : fetchedUser.map((users) => (
                 <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
                     <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
                     <div className='flex w-11/12 justify-between'>

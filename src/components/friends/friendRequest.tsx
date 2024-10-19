@@ -7,41 +7,47 @@ import { useSelector } from 'react-redux';
 import { RootStateType } from '@/store/userStore';
 import { UserType } from '@/model/User';
 import axios from 'axios';
-import { get } from 'http';
+import { Check } from 'lucide-react';
+import { X } from 'lucide-react';
 
 function FriendRequest() {
     const user = useSelector((state:RootStateType) => state.user)
+    const friends = useSelector((state:RootStateType) => state.friends)
     const [fetchedUser,setFetchedUser] = useState<UserType[]>([])  ;
+    const [count,setCount] = useState(0)
     useEffect(() => {
-        async function getRequests() {
-            const users = await axios.get(`/api/friends/add?id=${user._id}`)
-            if(users.data.status) {
-                setFetchedUser(users.data.users)        
-            } else {
-
-            }
-        }
-        getRequests()
+        setFetchedUser(friends.friendsRequestReceived as UserType[]) 
+        setCount(friends.friendsRequestReceived.length)
     },[])
 
   return (
     <div>
-        {
-            fetchedUser.map((users) => (
+        { 
+            count === 0
+            ? <p className='text-[#aaa] text-xl my-auto text-center mt-24'>No Friend Requests</p>
+            : fetchedUser.map((users) => (
                 <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
                     <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
                     <div className='flex w-11/12 justify-between'>
                         <p className='text-white text-xl my-auto'>{users.username}</p>
-                        <button className='py-0 pl-2 pr-2 bg-gray-600 rounded-xl text-[#bbb] z-10' onClick={async() => {
-                            const res = await axios.post('/api/friendReq/add', {sender : user._id, reciever : users._id})
-
-                        }}>Friends</button>
+                        <div className='flex gap-3 my-auto'>
+                            <div className='p-1 border-2 border-green-600 rounded-full cursor-pointer' onClick={() => {
+                                axios.post('/api/friends/request', {sender : users._id, reciever : user._id, accept : true})
+                            }}>
+                                <Check color='#2b2' className =''/>
+                            </div>
+                            <div className='p-1 border-2 border-red-600 rounded-full cursor-pointer' onClick={() => {
+                                axios.post('/api/friends/request', {sender : users._id, reciever : user._id, accept : false})
+                            }}>
+                                <X color='#b22' className =''/>
+                            </div>                    
+                        </div>
+                        
                     </div>
                 </div>
-            ))
+            ))    
         } 
     </div>
-  )
+)
 }
-
 export default FriendRequest

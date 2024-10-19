@@ -12,7 +12,9 @@ export async function GET(req: Request) {
                 path:"friendRequestReceived",
                 select : '-password',
             }).select("-password")
-            return Response.json({ status: true, data: "Friends fetched successfully", user })
+            const count = user?.friendRequestReceived.length
+            console.log("friendRequestReceived : ",user?.friendRequestReceived)
+            return Response.json({ status: true, data: "Friends fetched successfully", user, count })
         
     } catch (error) {
         console.log(error)
@@ -38,8 +40,14 @@ export async function POST(req: Request) {
             if (accept){
                 senderUser.friends.push(reciever)
                 recieverUser.friends.push(sender)
-                senderUser.friendRequest = senderUser.friendRequest.filter(id => id !== reciever)
-                recieverUser.friendRequestReceived = recieverUser.friendRequestReceived.filter(id => id !== sender)
+                await UserModel.updateOne(
+                    { _id: sender },
+                    { $pull: { friendRequest: recieverUser._id } }
+                  );
+                await UserModel.updateOne(
+                    { _id: reciever },
+                    { $pull: { friendRequestReceived: senderUser._id } }
+                  );
                 senderUser.save()
                 recieverUser.save()
                 return Response.json({
@@ -54,7 +62,7 @@ export async function POST(req: Request) {
                   );
                 await UserModel.updateOne(
                     { _id: reciever },
-                    { $pull: { friendRequest: senderUser._id } }
+                    { $pull: { friendRequestReceived: senderUser._id } }
                   );
                 
                 return Response.json({

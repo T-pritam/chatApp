@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { stat } from "fs";
 
 export interface UserState {
     _id : string,
@@ -37,16 +36,7 @@ export const userSlice = createSlice({
         },
         updateAbout : (state,action) => {
             state.about = action.payload.about
-        }
-        // retriveUser : (state,action) => {
-        //     const token = localStorage.getItem("token")
-        //     if(token){
-        //         const id = jwt.verify(token,"secret")
-        //         const data = await fetch(`/api/user/${id}`)
-        //         const user = await data.json()
-        //         state = user
-        //     }
-        // }
+        },        
     }
 });
 

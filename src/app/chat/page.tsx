@@ -7,7 +7,7 @@ import { useSelector,useDispatch } from 'react-redux'
 import { login } from '@/store/userSlice'
 import { RootStateType } from '@/store/userStore'
 import { useRouter } from 'next/navigation'
-import { UserState } from '@/store/userSlice'
+import { setFriends,setFriendsRequest,setFriendsRequestReceived } from '@/store/frinedsSlice'
 import axios from 'axios'
 
 
@@ -23,6 +23,14 @@ function Page() {
       const response = await axios.get('/api/user/getUser?token='+token)
       if(response.data.status){
         dispatch(login(response.data.user))
+        const friends = await axios.get(`/api/friends?id=${response.data.user._id}`)
+        console.log(friends.data.user)
+        dispatch(setFriends(friends.data.user.friends))
+        const friendsRequest = await axios.get(`/api/friends/add?id=${response.data.user._id}`)
+        console.log(friendsRequest.data)
+        dispatch(setFriendsRequest(friendsRequest.data.users))
+        const friendsRequestReceived = await axios.get(`/api/friends/request?id=${response.data.user._id}`)
+        dispatch(setFriendsRequestReceived(friendsRequestReceived.data.user.friendRequestReceived))        
       } else {
         localStorage.removeItem('token')
         router.push('/auth/signin')
