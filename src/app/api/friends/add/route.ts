@@ -1,5 +1,6 @@
 import dbConnect from "@/lib/db";
 import UserModel from "@/model/User";
+import { pusherServer } from "@/lib/pusher";
 
 export async function GET(req: Request) {
     await dbConnect();
@@ -59,6 +60,11 @@ export async function POST(req: Request) {
             recieverUser.friendRequestReceived.push(sender);
             senderUser.save();
             recieverUser.save();
+            console.log(`user-${recieverUser._id}`);
+            pusherServer.trigger(`user-${recieverUser._id}`, "friend-request", {
+                message: "Friend request sent", 
+                sender: senderUser,
+            })
             return Response.json({
                 status: true,
                 message: "Friend request sent successfully",
@@ -72,6 +78,9 @@ export async function POST(req: Request) {
                 { _id: reciever },
                 { $pull: { friendRequestReceived: senderUser._id } }
             );
+            pusherServer.trigger(`user-${recieverUser._id}`, "friend-request-remove", {
+                sender: senderUser,
+            })
             return Response.json({
                 status: true,
                 message: "Friend request removed successfully",

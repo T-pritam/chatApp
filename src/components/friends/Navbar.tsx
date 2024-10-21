@@ -7,9 +7,11 @@ import { User } from 'lucide-react';
 import '@/components/css/scrollbar.css';
 import { useRouter } from 'next/navigation';
 import { useEffect,useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import { RootStateType } from '@/store/userStore';
+import { pusherClient } from '@/lib/pusher';
 import Friends from './Friends';
+import {addFriendsRequest, updateFriends , addFriendsRequestReceived,removeFriendsRequest,removeFriendsRequestReceived,removeFriendsRequestSent, addFriendsRequestSent} from '@/store/frinedsSlice';
 import Sendreq from './Sendreq';
 import FriendRequest from './friendRequest';
 import { UserType } from '@/model/User';
@@ -18,14 +20,63 @@ import axios from 'axios';
 
 function Navbar() {
     const router = useRouter()
+    const dispatch = useDispatch()
     const [friendsBtn,setFriendsBtn] = useState(true)
     const [requestBtn,setRequestBtn] = useState(false)
     const [sendReqBtn,setSendReqBtn] = useState(false)
     const user = useSelector((state:RootStateType) => state.user)
-    const friends = useSelector((state:RootStateType) => state.friends)
-    console.log(friends)
-    
-    const [fetchedUser,setFetchedUser] = useState<UserType[]>([])  ;
+
+    useEffect(() => {
+        const channel5 = pusherClient.subscribe(`user-${user._id}`);
+        channel5.bind('friend-request-remove', (data : {sender : UserType}) => {
+            dispatch(removeFriendsRequestReceived(data.sender))
+            dispatch(addFriendsRequest(data.sender))
+        })
+        return ()=> {
+            channel5.unbind('friend-request-remove')
+            pusherClient.unsubscribe(`user-${user._id}`)
+        }
+    },[dispatch])
+
+    useEffect(() => {
+        const channel3 = pusherClient.subscribe(`user-${user._id}`);
+        channel3.bind('friend-request-accept-receiver', (data : { reciever : UserType}) => {
+            console.log("reciever : ",data.reciever)
+            dispatch(removeFriendsRequestSent(data.reciever))
+            dispatch(updateFriends(data.reciever))
+        })
+        return ()=> {
+            channel3.unbind('friend-request-accept')
+            pusherClient.unsubscribe(`user-${user._id}`)
+        }
+    },[])
+
+    useEffect(() => {
+        const channel2 = pusherClient.subscribe(`user-${user._id}`);
+        channel2.bind('friend-request-reject', (data : {reciever : UserType}) => {
+            console.log("reject : ",data.reciever)
+            dispatch(removeFriendsRequestSent(data.reciever))
+            dispatch(addFriendsRequest(data.reciever))
+        })
+        return ()=> {
+            channel2.unbind('friend-request-reject')
+            pusherClient.unsubscribe(`user-${user._id}`)
+        }
+    },[dispatch])
+
+    useEffect(() => {
+        console.log(`user-${user._id}`) 
+        const channel = pusherClient.subscribe(`user-${user._id}`);
+
+        channel.bind('friend-request', (data : {sender : UserType, reciever : UserType}) => {
+            dispatch(addFriendsRequestReceived(data.sender))
+            dispatch(removeFriendsRequest(data.sender))
+        })        
+        return () => {
+            channel.unbind('friend-request')
+            pusherClient.unsubscribe(`user-${user._id}`)
+        }
+    },[dispatch])
 
     useEffect(() => {
         if(localStorage.getItem('token') && user._id!= "") {

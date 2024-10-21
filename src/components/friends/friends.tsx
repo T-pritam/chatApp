@@ -12,7 +12,7 @@ import { set } from 'mongoose'
 function Friends() {
     const user = useSelector((state:RootStateType) => state.user)
     const friends = useSelector((state:RootStateType) => state.friends)
-    
+    console.log("Friends final : ",friends.friends)
 
   return (
     <div>

@@ -32,7 +32,9 @@ export const friendsSlice = createSlice({
             state.friendsRequestSent = action.payload
         },
         updateFriends: (state, action) => {
-            state.friends = [...state.friends, action.payload]
+            if (!state.friends.find((user) => user._id === action.payload._id)) {
+                state.friends = [...state.friends, action.payload]    
+            }
         },
         removeFriendsRequest: (state, action) => {
             state.friendsRequest = state.friendsRequest.filter((user) => user._id !== action.payload._id)

@@ -3,11 +3,17 @@ import React from 'react'
 import { LogOut } from 'lucide-react';
 import { Search } from 'lucide-react';
 import { User } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { RootStateType } from '@/store/userStore';
+import ChatMessage from './ChatMessage';
 import '../components/css/scrollbar.css';
 import { useRouter } from 'next/navigation';
 
 function ChatList() {
     const router = useRouter()
+    const friends = useSelector((state:RootStateType) => state.friends)
+    const user = useSelector((state:RootStateType) => state.user)
+    
   return (
     <div className=' border border-gray-500 h-screen overflow-y-scroll scrollbar-thin' >
         <div className='sticky top-0 z-10 bg-gray-700 pb-2 p-4'>
@@ -33,66 +39,20 @@ function ChatList() {
         </div>
 
         
-
-        <div className=''>
-            <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
-                <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
+        {
+            friends.friends.map((friend) => (
                 <div>
-                    <p className='text-white text-xl'>John</p>
-                    <p className='text-white text-sm'>Hello jogn hw are you?</p>
+                    <div className='flex justify-start p-3 gap-3 hover:bg-gray-500' onClick={() => router.push(`/chat/${friend._id}`)}>
+                        <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
+                        <div>
+                            <p className='text-white text-xl'>{friend.username}</p>
+                            <p className='text-white text-sm'>Hello jogn hw are you?</p>
+                        </div>
+                    </div>
+                    <hr className=" ml-14 border-gray-600 border-t" />
                 </div>
-            </div>
-            <hr className=" ml-14 border-gray-600 border-t" />
-            <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
-                <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
-                <div>
-                    <p className='text-white text-xl'>John</p>
-                    <p className='text-white text-sm'>Hello jogn hw are you?</p>
-                </div>
-            </div>
-            <hr className=" ml-14 border-gray-600 border-t" />
-            <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
-                <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
-                <div>
-                    <p className='text-white text-xl font-normal'>John</p>
-                    <p className='text-white text-sm font-normal'>Hello jogn hw are you?</p>
-                </div>
-            </div>
-            <hr className=" ml-14 border-gray-600 border-t" />
-            <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
-                <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
-                <div>
-                    <p className='text-white text-xl'>John</p>
-                    <p className='text-white text-sm'>Hello jogn hw are you?</p>
-                </div>
-            </div>
-            <hr className=" ml-14 border-gray-600 border-t" />
-            <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
-                <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
-                <div>
-                    <p className='text-white text-xl'>John</p>
-                    <p className='text-white text-sm'>Hello jogn hw are you?</p>
-                </div>
-            </div>
-            <hr className=" ml-14 border-gray-600 border-t" />
-            <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
-                <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
-                <div>
-                    <p className='text-white text-xl'>John</p>
-                    <p className='text-white text-sm'>Hello jogn hw are you?</p>
-                </div>
-            </div>
-            <hr className=" ml-14 border-gray-600 border-t" />
-            <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
-                <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
-                <div>
-                    <p className='text-white text-xl'>John</p>
-                    <p className='text-white text-sm'>Hello jogn hw are you?</p>
-                </div>
-            </div>
-            
-            
-        </div>
+            ))
+        }
         
     </div>
   )

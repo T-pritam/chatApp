@@ -8,6 +8,10 @@ import {updateFriends, addFriendsRequest, addFriendsRequestReceived ,removeFrien
 import axios from 'axios';
 import { Check } from 'lucide-react';
 import { X } from 'lucide-react';
+import { pusherClient } from '@/lib/pusher';
+import { useEffect,useState } from 'react';
+import { UserType } from '@/model/User';
+import { set } from 'mongoose';
 
 function FriendRequest() {
     const dispatch = useDispatch()

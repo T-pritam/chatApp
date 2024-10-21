@@ -1,7 +1,6 @@
 import dbConnect from "@/lib/db";
 import UserModel from "@/model/User";
-import mongoose from "mongoose";
-
+import { pusherServer } from "@/lib/pusher";
 
 export async function GET(req: Request) {
     await dbConnect();
@@ -48,12 +47,14 @@ export async function POST(req: Request) {
                   );
                 senderUser.save()
                 recieverUser.save()
+                pusherServer.trigger(`user-${senderUser._id}`, "friend-request-accept-receiver", {
+                    reciever : recieverUser
+                })
                 return Response.json({
                     status : true,
                     message : "Friend request Accepted"
                 })
             } else {
-                console.log("runned")
                 await UserModel.updateOne(
                     { _id: sender },
                     { $pull: { friendRequest: recieverUser._id } }
@@ -62,7 +63,9 @@ export async function POST(req: Request) {
                     { _id: reciever },
                     { $pull: { friendRequestReceived: senderUser._id } }
                   );
-                
+                pusherServer.trigger(`user-${senderUser._id}`, "friend-request-reject", {
+                    reciever : recieverUser
+                })
                 return Response.json({
                     status : true,
                     message : "Friend request Rejected"

@@ -12,7 +12,6 @@ function Sendreq() {
     const dispatch = useDispatch()
     const user = useSelector((state:RootStateType) => state.user)
     const friends = useSelector((state:RootStateType) => state.friends)
-    console.log("friends : ", friends)  
 
   return (
     <div>

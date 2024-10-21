@@ -1,7 +1,5 @@
 import dbConnect from "@/lib/db";
 import UserModel from "@/model/User";
-import { log } from "console";
-import { MdOutlineTheaterComedy } from "react-icons/md";
 
 export async function GET(req: Request) {
 
