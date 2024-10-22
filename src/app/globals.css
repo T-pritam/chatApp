@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add this to your globals.css file */
+Add this to your globals.css file
 .scrollbar-thin {
   scrollbar-width: thin;               /* For Firefox */
   scrollbar-color: #4b5563 transparent; /* Thumb color and transparent track */

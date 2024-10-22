@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      borderRadius:{
+        sm: '0.125rem', // 2px
+        md: '0.375rem',
+      },
       keyframes: {
         "caret-blink": {
           "0%,70%,100%": { opacity: "1" },

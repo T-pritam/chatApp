@@ -15,7 +15,7 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: RootLayoutProps) {
   const router = useRouter();
   const pathname = usePathname();
   const isAuthRoute = pathname.match('/auth/');
