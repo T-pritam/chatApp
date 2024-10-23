@@ -51,7 +51,6 @@ export default function Signup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("PritamMm")
     setIsSubmiting(true);
     try {
       const response = await axios.post(`/api/auth/signin`, {

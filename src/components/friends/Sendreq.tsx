@@ -8,7 +8,7 @@ import axios from 'axios';
 import { removeFriendsRequest, addFriendsRequestSent, removeFriendsRequestSent, addFriendsRequest } from '@/store/frinedsSlice'
 import { send } from 'process';
 
-function Sendreq() {
+function Sendreq(props : { searchText : string }) {
     const dispatch = useDispatch()
     const user = useSelector((state:RootStateType) => state.user)
     const friends = useSelector((state:RootStateType) => state.friends)

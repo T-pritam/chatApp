@@ -13,7 +13,7 @@ import { useEffect,useState } from 'react';
 import { UserType } from '@/model/User';
 import { set } from 'mongoose';
 
-function FriendRequest() {
+function FriendRequest(props : { searchText : string }) {
     const dispatch = useDispatch()
     const user = useSelector((state:RootStateType) => state.user)
     const friends = useSelector((state:RootStateType) => state.friends)

@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { BiSolidMessageAltDetail } from "react-icons/bi";
 import { BiMessageAltDetail } from "react-icons/bi";
 import { FaUserFriends } from "react-icons/fa";
+import { MdGroups } from "react-icons/md";
 
 function Options() {
   const router = useRouter()
@@ -30,7 +31,7 @@ function Options() {
     
     
     <div className="space-y-5">
-    <div onClick={handleMessageBtn}>
+    <div onClick={handleMessageBtn} className='group'>
         {
           messageBtnselect 
           ? <div>
@@ -38,17 +39,31 @@ function Options() {
           </div>
           : <BiMessageAltDetail size={34} color='#bbb' className='mx-auto pd-2 cursor-pointer focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50' onClick={() => router.push('/chat')}/>
         }
+        <span className="absolute left-24 top-2 transform -translate-x-1/2 mt-2 p-1 px-4 rounded-xl bg-[#eee] text-black text-center text-sm z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          Chats
+        </span>
+      </div>
+      <div className='group'>
+      <FaUserFriends size={36} color='#bbb' className='cursor-pointer' onClick={() => router.push('/friends')} />
+        <span className="absolute left-24 top-16 transform -translate-x-1/2 mt-2 p-1 px-4 rounded-xl bg-[#eee] text-black text-center text-sm z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          Friends
+        </span>
       </div>
 
-        <FaUserFriends size={36} color='#bbb' className='cursor-pointer' onClick={() => router.push('/friends')} />
-        <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
+      <div className='group'>
+          <MdGroups size={36} color='#bbb' className='cursor-pointer' onClick={() => router.push('/groups')} />
+          <span className="absolute left-24 top-[7.40rem] transform -translate-x-1/2 mt-2 p-1 px-4 rounded-xl bg-[#eee] text-black text-center text-sm z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              Groups
+          </span>
+        </div>
+        
         <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
         <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
     </div>
 
     
       <div className="space-y-6">
-        <div onClick={handleSettingBtn}>
+        <div onClick={handleSettingBtn} className='group'>
           {
             settingBtnselect 
             ? <div>
@@ -56,8 +71,17 @@ function Options() {
             </div>
             : <IoSettingsOutline size={34} stroke='#bbb' className='mx-auto pd-2 cursor-pointer focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50' onClick={() => router.push('/profile/settings')}/>
           }
+          <span className="absolute left-24 bottom-[4.5rem] transform -translate-x-1/2 mt-2 p-1 px-4 rounded-xl bg-[#eee] text-black text-center text-sm z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          Settings
+        </span>
         </div>
-        <User size={34} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-700 cursor-pointer' onClick={() => router.push('/profile/details')}/>
+        <div className='group'>
+          <User size={34} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-700 cursor-pointer' onClick={() => router.push('/profile/details')}/>
+          <span className="absolute left-24 bottom-4 transform -translate-x-1/2 mt-2 p-1 px-4 rounded-xl bg-[#eee] text-black text-center text-sm z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            Profile
+          </span>
+        </div>
+        
       </div>
 
       </div>    

@@ -68,6 +68,18 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
     scrollToBottom();
   }, [messages]);
 
+  const sendMessage = () => {
+    if(text.trim() !== ""){
+      axios.post(`/api/messages/user`,{
+        senderId : user._id,
+        receiverId : id,
+        text
+      })
+      setMessages([...messages,{senderId : user._id,receiverId : id,text,createdAt:new Date().toISOString()}])
+      setText("")
+    }
+  }
+
   const formatTime = (dateString: string) => {
     const date = new Date(dateString); // Convert string to Date object
     return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -76,7 +88,7 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
   return (
     <div className='flex flex-col h-screen'>
 
-      <div className='h-16 bg-gray-900'>
+      <div className='h-16 bg-gray-900' onClick={() => setDetails(true)}>
         <UserNavbar username={username}/>
       </div>
 
@@ -88,13 +100,13 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
           className={`flex ${message.senderId === user._id ? 'justify-end' : 'justify-start'}`}
         >
           <div
-            className={`inline-block max-w-md break-words bg-opacity-80 p-1 mb-1 rounded-md text-white ${
-              message.senderId === user._id ? 'bg-green-500' : 'bg-gray-400'
+            className={`inline-block max-w-md break-words bg-opacity-80 px-2 py-1 mb-1 rounded text-white ${
+              message.senderId === user._id ? 'bg-[#005c4b]' : 'bg-gray-500'
             }`}
           >
-            {message.text}
             <div>
-               <p className='text-xs inline-block float-right'>{formatTime(message.createdAt)}</p>
+               <p className='leading-5 text-base'>{message.text}</p>
+               <p className='flex justify-end text-xs float-right text-[#ddd] mt-0'>{formatTime(message.createdAt)}</p>
             </div>
           </div>
         </div>
@@ -105,20 +117,8 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
       </div>
 
       <div className='bg-gray-900 h-16 p-3 flex justify-around'>
-            <input type="text" placeholder='Type a message' className='bg-gray-800 w-4/6 h-10 outline-none border-8 rounded border-gray-800 text-white' onChange={(e) => setText(e.target.value)} />
-            <IoMdSend size={'2.5vw'} color='#999' className='my-auto' onClick={() => {
-              if(text !== ""){
-                axios.post(`/api/messages/user`,{
-                  senderId : user._id,
-                  receiverId : id,
-                  text
-                })
-                console.log("Before : ",text)
-                setText("")
-                setMessages([...messages,{senderId : user._id,receiverId : id,text,createdAt:new Date().toISOString()}])
-                console.log("After : ",text)
-              }
-            }}/>
+            <input type="text" placeholder='Type a message' value={text} className='bg-gray-800 w-4/6 h-10 outline-none border-8 rounded border-gray-800 text-white' onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' ? sendMessage() : null}/>
+            <IoMdSend size={'2.5vw'} color='#999' className='my-auto' onClick={ sendMessage }/>
       </div>
       
     </div>

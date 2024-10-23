@@ -5,21 +5,36 @@ import { useSelector } from 'react-redux'
 import { RootStateType } from '@/store/userStore'
 import { useState,useEffect } from 'react'
 import axios from 'axios'
-import { UserType } from '@/model/User'
-import { User } from 'lucide-react';
-import { set } from 'mongoose'
+import { Search, User } from 'lucide-react';
+import { UserState } from '@/store/userSlice'
 
-function Friends() {
+
+function Friends(props : { searchText : string }) {
     const user = useSelector((state:RootStateType) => state.user)
     const friends = useSelector((state:RootStateType) => state.friends)
-    console.log("Friends final : ",friends.friends)
+    const [friendsList,setFriendsList] = useState<UserState[] >([])
+
+
+    useEffect(() => {
+        const fetchFriends = friends.friends.filter((f) => f.username.toLowerCase().includes(props.searchText.toLowerCase()))
+        console.log("fetch : ",fetchFriends)
+        if(props.searchText == "") {
+            setFriendsList(friends.friends)
+        }
+        setFriendsList(fetchFriends)
+        
+    },[props.searchText])
+
+    useEffect(() => {
+        setFriendsList(friends.friends)
+    },[])
 
   return (
     <div>
         {
-            friends.friends.length == 0 
+            friendsList.length == 0 
             ? <p className='text-[#aaa] text-xl my-auto text-center mt-24'>No Friends</p>
-            : friends.friends.map((users) => (
+            : friendsList.map((users) => (
                 <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
                     <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
                     <div className='flex w-11/12 justify-between'>
