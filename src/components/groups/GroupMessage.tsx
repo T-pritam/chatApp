@@ -12,6 +12,12 @@ import { updateMessage } from '@/store/chatListSlice';
 import { UserState } from '@/store/userSlice';
 import axios from 'axios';
 import '@/components/css/scrollbar.css';
+import { group } from 'console';
+
+interface groupType{
+    _id: string,
+    username: string,
+}
 
 interface friendDetails{
   id: string,
@@ -21,8 +27,7 @@ interface friendDetails{
 }
 
 interface message{
-  senderId: string,
-  receiverId: string,
+  senderId: groupType,
   text: string,
   createdAt : string,
 }
@@ -44,11 +49,10 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
 
   useEffect(() => {
     async function getMessages(){
-      console.log("senderId : ",user._id," receiverId : ",id)
-      const res = await axios.get(`/api/messages/user?senderId=${user._id}&receiverId=${id}`)
-      console.log("senderId : ",user._id," receiverId : ",id)
-      console.log(res.data)
+      const res = await axios.get(`/api/messages/group?id=${id}`)
       setMessages(res.data.messages)
+      console.log("User Id : ",user._id)
+      console.log(res.data.messages)
     }
     getMessages()
     scrollToBottom()
@@ -56,10 +60,13 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
 
   useEffect(() => {
     if (!pusherRef.current){
-      const channel = pusherClient.subscribe(`user-${user._id}`)
-      channel.bind('new-message', (data : {senderId : string, receiverId : string, text : string}) => {
-          setMessages((prev) => [...prev, {senderId : data.senderId,receiverId : data.receiverId,text : data.text,createdAt:new Date().toISOString()}]);
-      })
+      const channel = pusherClient.subscribe(`group-${id}`)
+      channel.bind('new-message', (data : {senderId : string, sendername : string, text : string}) => {
+          console.log("Socket data :",data)
+          setMessages((prevMessages) => [...prevMessages, {senderId : {username : data.sendername,_id : data.senderId},text : data.text,createdAt:new Date().toISOString()}])
+          dispatch(updateMessage({id : id,message : data.text,time:new Date().toISOString()}))
+        })
+
 
       return () => {
         channel.unbind('new-message')
@@ -75,12 +82,12 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
 
   const sendMessage = () => {
     if(text.trim() !== ""){
-      axios.post(`/api/messages/user`,{
+      axios.post(`/api/messages/group`,{
         senderId : user._id,
-        receiverId : id,
+        groupId : id,
         text
       })
-      setMessages([...messages,{senderId : user._id,receiverId : id,text,createdAt:new Date().toISOString()}])
+      setMessages([...messages,{senderId : {_id : user._id,username : user.username},text,createdAt:new Date().toISOString()}])
       dispatch(updateMessage({id : id,message : text,time:new Date().toISOString()}))
       setText("")
     }
@@ -102,15 +109,14 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
         {
           messages.map((message,index) => (
             <div key={index}>
-              <div 
-          className={`flex ${message.senderId === user._id ? 'justify-end' : 'justify-start'}`}
-        >
+              <div className={`flex ${message.senderId._id === user._id ? 'justify-end' : 'justify-start'}`}>
           <div
             className={`inline-block max-w-md break-words bg-opacity-80 px-2 py-1 mb-1 rounded text-white ${
-              message.senderId === user._id ? 'bg-[#005c4b]' : 'bg-gray-500'
+              message.senderId._id === user._id ? 'bg-[#005c4b]' : 'bg-gray-500'
             }`}
           >
             <div>
+                <p>{message.senderId._id === user._id ? null : message.senderId.username}</p>
                <p className='leading-5 text-base'>{message.text}</p>
                <p className='flex justify-end text-xs float-right text-[#ddd] mt-0'>{formatTime(message.createdAt)}</p>
             </div>
