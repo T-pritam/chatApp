@@ -7,14 +7,17 @@ import { useSelector,useDispatch } from 'react-redux'
 import { login } from '@/store/userSlice'
 import { RootStateType } from '@/store/userStore'
 import { useRouter } from 'next/navigation'
+import { AppDispatch } from '@/store/userStore'
+import { fetchChatListById } from '@/store/chatListSlice'
 import { setFriends,setFriendsRequest,setFriendsRequestReceived,setFriendsRequestSent } from '@/store/frinedsSlice'
 import axios from 'axios'
 
 
 function Page() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const users = useSelector((state:RootStateType) => state.user)
   const router = useRouter()
+  const chatlist = useSelector((state:RootStateType) => state.chatList)
 
 
   useEffect(() => {
@@ -35,13 +38,15 @@ function Page() {
         router.push('/auth/signin')
       }
     }
+    
     const token = localStorage.getItem('token')
     if (token){
       getUser(token)
     }
   },[])
   
-
+  
+    console.log("chatList : ",chatlist.data)
   return (
     <div >
       <Common />

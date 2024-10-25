@@ -20,8 +20,9 @@ function AllGroup(props : {
     setCreate2 : React.Dispatch<React.SetStateAction<boolean>>
 }) {
     const router = useRouter()
-    const friends = useSelector((state:RootStateType) => state.friends)
-    const [friendsList,setFriendsList] = useState<UserState []>([])
+    const user = useSelector((state:RootStateType) => state.user)
+    const [grp,setgrp] = useState<any[]>([])
+    const [grptemp,setgrpTemp] = useState<any[]>([])
     const [searchBtn,setSearchBtn] = useState<string>("")
     const [searchText,setSearchText] = useState<string>("")
     const [defaultBtn,setDefaultBtn] = useState<boolean>(true)
@@ -34,19 +35,22 @@ function AllGroup(props : {
     },[debouncedSearchText])
 
     useEffect(() => {
-        setFriendsList(friends.friends)
-    },[friends.friends])
+        const fetchGroups = async () => {
+            const grp = await axios.get('http://localhost:3000/api/groups/getById?id='+user._id)
+            setgrp(grp.data.group)
+            setgrpTemp(grp.data.group)
+        }
+        fetchGroups()
+    },[])
 
     useEffect(() => {
-        const fetchFriends = friends.friends.filter((f) => f.username.toLowerCase().includes(searchText.toLowerCase()))
-        if(searchText.trim() == "") {
-            setFriendsList(friends.friends)
+        if (searchText.trim() == "") {
+            setgrpTemp(grptemp)
         } else {
-            setFriendsList(fetchFriends)
-        }
-        console.log("fetch : ",fetchFriends)
+        const fetchgrp = grp.filter((g) => g.groupName.toLowerCase().includes(searchText.toLowerCase()))
+        setgrpTemp(fetchgrp)
+    }
     },[searchText])
-
     
   return (
     <div className=' border border-gray-500 h-screen overflow-y-scroll scrollbar-thin' >
@@ -90,6 +94,22 @@ function AllGroup(props : {
 
         
         <div>
+            {
+                grptemp.length == 0
+                ? <p className='text-[#aaa] text-xl my-auto text-center mt-24'>No Groups</p>
+                : grptemp.map((g) => (
+                    <div>
+                        <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
+                            <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
+                            <div className='w-5/6'>
+                                <p className='text-white text-xl'>{g.name}</p>
+                                <p className='text-white text-sm'>{g.members.length} members</p>
+                            </div>
+                        </div>
+                        <hr className=" ml-14 border-gray-600 border-t" />
+                    </div>
+                ))
+            }
             
         </div>
         

@@ -5,6 +5,7 @@ export interface IGroup extends Document {
   description: string;
   members: mongoose.Types.ObjectId[]; // Array of User IDs
   admins: mongoose.Types.ObjectId[]; // Array of User IDs
+  createdBy: mongoose.Types.ObjectId;
 }
 
 const GroupSchema = new Schema<IGroup>({
@@ -12,6 +13,7 @@ const GroupSchema = new Schema<IGroup>({
   description: { type: String },
   members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   admins: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
 
 }, { timestamps: true });
 

@@ -9,17 +9,28 @@ import {useState,useEffect } from 'react';
 import '../components/css/scrollbar.css';
 import { IoClose } from "react-icons/io5";
 import { UserState } from '@/store/userSlice';
+import formatDateString from '@/lib/formatDate';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
+import { fetchChatListById } from '@/store/chatListSlice';
+import { AppDispatch } from '@/store/userStore';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
 
 function ChatList() {
+    const dispatch = useDispatch<AppDispatch>()
     const router = useRouter()
     const friends = useSelector((state:RootStateType) => state.friends)
+    const users = useSelector((state:RootStateType) => state.user)
+    const chatList = useSelector((state:RootStateType) => state.chatList)
     const [friendsList,setFriendsList] = useState<UserState []>([])
     const [searchBtn,setSearchBtn] = useState<string>("")
     const [searchText,setSearchText] = useState<string>("")
     const [debouncedSearchText] = useDebounce(searchBtn, 800);
+
+    useEffect(() => {
+        dispatch(fetchChatListById(users._id))    
+    },[users])
 
     useEffect(() => {
         setSearchText(debouncedSearchText.trim())
@@ -75,7 +86,7 @@ function ChatList() {
         </div>
 
         
-        {
+        {/* {
             friends.friends.length == 0 
             ? <p className='text-[#aaa] text-xl my-auto text-center mt-24'>No Friends</p>
             : friendsList.length == 0
@@ -95,7 +106,49 @@ function ChatList() {
                     <hr className=" ml-14 border-gray-600 border-t" />
                 </div>
             ))
-        }
+        } */}
+        
+        {chatList.data.map((chat, index) => (
+        <div key={index}>
+          {"friendId" in chat ? (
+            <div onClick={() => router.push(`/chat/${chat.friendId._id}`)}>
+                    <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
+                        <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
+                        <div className='w-5/6'>
+                            <div className='flex justify-between items-center'>
+                                <p className='text-white text-xl'>{chat.friendId.username}</p>
+                                {
+                                    chat.lastMessageTime == null
+                                    ? null
+                                    : <p className='text-white text-xs'>{formatDateString(chat.lastMessageTime)}</p>
+                                }
+                            </div>
+                            <p className='text-white text-sm'>{chat.lastMessage}</p>
+                        </div>
+                    </div>
+                    <hr className=" ml-14 border-gray-600 border-t" />
+            </div>
+          ) : "groupId" in chat ? (
+            <div onClick={() => router.push(`/chat/group/${chat.groupId._id}`)}>
+              <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
+                        <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
+                        <div className='w-5/6'>
+                            <div className='flex justify-between items-center'>
+                                <p className='text-white text-xl'>{chat.groupId.name}</p>
+                                {
+                                    chat.lastMessageTime == null
+                                    ? null
+                                    : <p className='text-white text-xs'>{formatDateString(chat.lastMessageTime)}</p>
+                                }
+                            </div>
+                            <p className='text-white text-sm'>{chat.lastMessage}</p>
+                        </div>
+                    </div>
+                    <hr className=" ml-14 border-gray-600 border-t" />
+            </div>
+          ) : null}
+        </div>
+      ))}
         
     </div>
   )

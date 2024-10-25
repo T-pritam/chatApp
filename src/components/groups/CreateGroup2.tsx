@@ -6,6 +6,7 @@ import { User } from 'lucide-react';
 import { useState } from 'react';
 import { Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 function CreateGroup2(props : {
@@ -14,6 +15,7 @@ function CreateGroup2(props : {
     setAll : React.Dispatch<React.SetStateAction<boolean>>,
 
 }) {
+  const router = useRouter();
   const members = useSelector((state:RootStateType) => state.group)
   const memberids = members.group.map((m) => m._id)
   const user = useSelector((state:RootStateType) => state.user)
@@ -55,7 +57,7 @@ function CreateGroup2(props : {
                             position: "bottom-right"
                           })} else {
                             const res = await axios.post('/api/groups/create', {name : groupname,description : groupdes, admins : user._id, members : memberids})
-                            console.log("Create Group : ",res.data)
+                            router.push(`/chat/group/${res.data.group._id}`)
                           }
                         }}>
                         <Check size={25}  strokeWidth={2} color='#bbb' className=' mx-auto mt-3' />

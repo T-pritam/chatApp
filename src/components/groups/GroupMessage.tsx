@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import UserNavbar from './UserNavbar'
+import GroupNavbar from './GroupNavbar';
 import { useState,useEffect,useRef } from 'react';
 import { IoMdSend } from "react-icons/io";
 import { useSelector } from 'react-redux';
@@ -9,14 +9,14 @@ import { pusherClient } from '@/lib/pusher';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/userStore';
 import { updateMessage } from '@/store/chatListSlice';
+import { UserState } from '@/store/userSlice';
 import axios from 'axios';
 import '@/components/css/scrollbar.css';
 
 interface friendDetails{
   id: string,
-  username: string,
-  about: string,
-  email: string,
+  name: string,
+  members: number,
   setDetails: React.Dispatch<React.SetStateAction<boolean>>
 }
 
@@ -27,7 +27,7 @@ interface message{
   createdAt : string,
 }
 
-const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDetails}) => {
+const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) => {
   const dispatch = useDispatch<AppDispatch>()
   const [text, setText] = useState<string>('')
   const [messages,setMessages] = useState<message[]>([])
@@ -95,7 +95,7 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
     <div className='flex flex-col h-screen'>
 
       <div className='h-16 bg-gray-900' onClick={() => setDetails(true)}>
-        <UserNavbar username={username}/>
+        <GroupNavbar name={name} members={members}/>
       </div>
 
       <div  ref={messageContainerRef} className='bg-gray-700 flex-1 overflow-y-auto h-screen scrollbar-thin p-4'>
@@ -131,4 +131,4 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
   )
 }
 
-export default ChatMessage
+export default GroupMessage

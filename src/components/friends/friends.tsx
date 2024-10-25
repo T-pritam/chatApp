@@ -16,6 +16,7 @@ function Friends(props : { searchText : string }) {
 
 
     useEffect(() => {
+        console.log("Search text :", props.searchText)
         const fetchFriends = friends.friends.filter((f) => f.username.toLowerCase().includes(props.searchText.toLowerCase()))
         console.log("fetch : ",fetchFriends)
         if(props.searchText == "") {
