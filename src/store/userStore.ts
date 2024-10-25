@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userSlice from "./userSlice";
 import friendsSlice from "./frinedsSlice";
+import groupSlice from "./groupSlice";
 
 export const store = configureStore({
     reducer: {
         user: userSlice,
-        friends: friendsSlice
+        friends: friendsSlice,
+        group: groupSlice
     },
 })
 

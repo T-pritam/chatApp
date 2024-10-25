@@ -16,7 +16,8 @@ import axios from 'axios';
 
 function AllGroup(props : {
     setAll : React.Dispatch<React.SetStateAction<boolean>>,
-    setCreate : React.Dispatch<React.SetStateAction<boolean>>
+    setCreate : React.Dispatch<React.SetStateAction<boolean>>,
+    setCreate2 : React.Dispatch<React.SetStateAction<boolean>>
 }) {
     const router = useRouter()
     const friends = useSelector((state:RootStateType) => state.friends)
@@ -76,9 +77,11 @@ function AllGroup(props : {
                 <button className={`p-1 pl-2 pr-2 bg-gray-600 rounded-xl text-[#bbb] hover:bg-gray-500/35 ${all ? "bg-gray-500/35" : ""}`}  onClick={() => {
                     props.setAll(true)
                     props.setCreate(false)
+                    props.setCreate2(false)
                 }}>All</button>
                 <button className={`p-1 pl-2 pr-2 bg-gray-600 rounded-xl text-[#bbb] hover:bg-gray-500/55 ${createBtn ? "bg-gray-500/55" : ""}`} onClick={() => {
                     props.setAll(false)
+                    props.setCreate2(false)
                     props.setCreate(true)
                 }}>Create Group</button>
             </div>
