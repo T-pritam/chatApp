@@ -43,10 +43,11 @@ export async function GET(req: Request) {
         const lastMessage = await Message.findOne({ groupId })
           .sort({ createdAt: -1 })
           .exec();
+        const sender = await UserModel.findById(lastMessage?.senderId);
         return {
           groupId,
-          groupName: group?.name,
           lastMessage: lastMessage ? lastMessage.text : null,
+          lastMessageSender: sender?.username,
           lastMessageTime: lastMessage ? lastMessage.createdAt : null,
         };
       })

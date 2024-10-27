@@ -1,6 +1,7 @@
 import ChatList from '@/components/ChatList'
 
 
+
 interface RootLayoutProps {
   children: React.ReactNode;
 }
@@ -12,7 +13,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
               <ChatList />
             </div>
             <div className="bg-gray-500 flex-1 h-screen inline-block relative ">
-            {children}
+                {children}
             </div> 
             {/* <div className="bg-gray-500 h-screen">
               

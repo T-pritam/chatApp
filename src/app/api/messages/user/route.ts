@@ -5,17 +5,17 @@ import { pusherServer } from "@/lib/pusher";
 export async function POST(req: Request) {
     await dbConnect();
     try {  
-        const { senderId,receiverId,text } = await req.json()
+        const { senderId,receiverId,text,senderUsername } = await req.json()
         await MessageModel.create({
             senderId,
             receiverId,
             text
         })
 
-        pusherServer.trigger(`user-${receiverId}`, "new-message", {
+        pusherServer.trigger(`user-${senderId}`, "new-message", {
             senderId,
             receiverId,
-            text
+            text,
         })
         return Response.json({
             status: true,

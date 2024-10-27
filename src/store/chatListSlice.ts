@@ -17,7 +17,7 @@ interface GroupChat {
     _id: string;
     name: string;
   };
-  groupName: string;
+  lastMessageSender: string | null;
   lastMessage: string | null;
   lastMessageTime: string | null;
 }
@@ -48,7 +48,8 @@ const chatListSlice = createSlice({
   name: 'chatList',
   initialState,
   reducers: {
-    updateMessage(state, action: PayloadAction<{ id: string; message: string; time: string }>) {
+    updateMessage(state, action: PayloadAction<{ id: string; message: string; time: string , sender?: string}>) {
+        console.log("payload : ",action.payload)
         const chat = state.data.find((item) =>
           'friendId' in item ? item.friendId._id === action.payload.id : item.groupId._id === action.payload.id
         );
@@ -56,6 +57,10 @@ const chatListSlice = createSlice({
         if (chat) {
           chat.lastMessage = action.payload.message;
           chat.lastMessageTime = action.payload.time;
+
+          if ('groupId' in chat && action.payload.sender) {
+            chat.lastMessageSender = action.payload.sender;
+          }
           
           state.data.sort((a, b) => {
             const timeA = a.lastMessageTime ? new Date(a.lastMessageTime).getTime() : 0;

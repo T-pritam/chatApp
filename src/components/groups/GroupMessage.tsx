@@ -51,8 +51,6 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
     async function getMessages(){
       const res = await axios.get(`/api/messages/group?id=${id}`)
       setMessages(res.data.messages)
-      console.log("User Id : ",user._id)
-      console.log(res.data.messages)
     }
     getMessages()
     scrollToBottom()
@@ -60,21 +58,22 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
 
   useEffect(() => {
     if (!pusherRef.current){
-      const channel = pusherClient.subscribe(`group-${id}`)
-      channel.bind('new-message', (data : {senderId : string, sendername : string, text : string}) => {
-          console.log("Socket data :",data)
-          setMessages((prevMessages) => [...prevMessages, {senderId : {username : data.sendername,_id : data.senderId},text : data.text,createdAt:new Date().toISOString()}])
-          dispatch(updateMessage({id : id,message : data.text,time:new Date().toISOString()}))
-        })
-
-
+      const channel = pusherClient.subscribe(`groups`)
+      channel.bind('new-messages', (data : {groupId : string,senderId : string, text : string,senderUsername: string}) => {
+        console.log("Match Id : ",data.senderId,user._id)  
+        if (data.senderId === user._id) {
+            return
+          } else {
+          setMessages((prevMessages) => [...prevMessages, {senderId : {username : data.senderUsername,_id : data.senderId},text : data.text,createdAt:new Date().toISOString()}])
+          dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername}))
+      }})
       return () => {
-        channel.unbind('new-message')
-        pusherClient.unsubscribe(`user-${user._id}`)
+        channel.unbind('new-messages')
+        pusherClient.unsubscribe(`groups`)
       }
     }
     
-  },[])
+  },[dispatch])
 
   useEffect(() => {
     scrollToBottom();
@@ -85,10 +84,11 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
       axios.post(`/api/messages/group`,{
         senderId : user._id,
         groupId : id,
-        text
+        text,
+        senderUsername : user.username
       })
       setMessages([...messages,{senderId : {_id : user._id,username : user.username},text,createdAt:new Date().toISOString()}])
-      dispatch(updateMessage({id : id,message : text,time:new Date().toISOString()}))
+      dispatch(updateMessage({id : id,message : text,time:new Date().toISOString(),sender : user.username}))
       setText("")
     }
   }

@@ -9,12 +9,14 @@ import {useState,useEffect } from 'react';
 import '../components/css/scrollbar.css';
 import { IoClose } from "react-icons/io5";
 import { UserState } from '@/store/userSlice';
+import { updateMessage } from '@/store/chatListSlice';
 import formatDateString from '@/lib/formatDate';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
 import { fetchChatListById } from '@/store/chatListSlice';
 import { AppDispatch } from '@/store/userStore';
 import { useDispatch } from 'react-redux';
+import { pusherClient } from '@/lib/pusher';
 import axios from 'axios';
 
 function ChatList() {
@@ -84,29 +86,6 @@ function ChatList() {
             </div>
 
         </div>
-
-        
-        {/* {
-            friends.friends.length == 0 
-            ? <p className='text-[#aaa] text-xl my-auto text-center mt-24'>No Friends</p>
-            : friendsList.length == 0
-            ? <div className='my-auto text-center mt-24'>
-                <p className='text-[#aaa] text-xl '>No Friends</p>
-                <button className='p-2 bg-gray-600 rounded text-[#bbb] hover:bg-gray-500/55' onClick={() => router.push('/friends')}>Add Friend</button>
-              </div>
-            : friendsList.map((friend) => (
-                <div>
-                    <div className='flex justify-start p-3 gap-3 hover:bg-gray-500' onClick={() => router.push(`/chat/${friend._id}`)}>
-                        <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
-                        <div>
-                            <p className='text-white text-xl'>{friend.username}</p>
-                            <p className='text-white text-sm'>Hello jogn hw are you?</p>
-                        </div>
-                    </div>
-                    <hr className=" ml-14 border-gray-600 border-t" />
-                </div>
-            ))
-        } */}
         
         {chatList.data.map((chat, index) => (
         <div key={index}>
@@ -141,7 +120,14 @@ function ChatList() {
                                     : <p className='text-white text-xs'>{formatDateString(chat.lastMessageTime)}</p>
                                 }
                             </div>
-                            <p className='text-white text-sm'>{chat.lastMessage}</p>
+                            {
+                                chat.lastMessage == null
+                                ? null
+                                : chat.lastMessageSender == users.username
+                                ? <p className='text-white text-sm'>You : {chat.lastMessage}</p>
+                                : <p className='text-white text-sm'>{chat.lastMessageSender} : {chat.lastMessage}</p>
+                                
+                            }
                         </div>
                     </div>
                     <hr className=" ml-14 border-gray-600 border-t" />

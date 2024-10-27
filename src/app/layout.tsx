@@ -9,6 +9,7 @@ import {store} from "../store/userStore"
 import { Provider } from "react-redux";
 import { useEffect,useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {PusherContextProvider} from '@/context/PusherContextProvider';
 
 
 interface RootLayoutProps {
@@ -35,7 +36,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         { 
           isAuthRoute ? <div>
             <Provider store={store}>
-              {children}
+              <PusherContextProvider>
+                {children}
+              </PusherContextProvider>
             </Provider>
             </div> : <div className="">
             <div className="bg-gray-500 w-1/16 h-screen p-3 float-left inline-block relative">
@@ -46,7 +49,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
       
         <ToastProvider />
           <Provider store={store}>
-            {children}
+            <PusherContextProvider>
+              {children}
+            </PusherContextProvider>
           </Provider>
         </body>
     </html>

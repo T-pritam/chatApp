@@ -22,15 +22,16 @@ export async function GET(req: Request){
 export async function POST(req: Request){
     await dbConnect();
     try {
-        const { groupId, text, senderId } = await req.json()
+        const { groupId, text, senderId,senderUsername } = await req.json()
         await MessageModel.create({
             groupId,
             text,
             senderId
         })
-        pusherServer.trigger(`group-${groupId}`, "new-message", {
+        pusherServer.trigger("groups", "new-messages", {
+            groupId : groupId,
             senderId,
-            sendername : senderId.username,  
+            senderUsername,  
             text  
         })
         return Response.json({ status: true, message: "Message saved" })

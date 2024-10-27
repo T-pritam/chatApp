@@ -37,6 +37,8 @@ function page({params}:{params :{ id : string }})
                 const response = await axios.get(`/api/groups?id=${params.id}`)
                 if(response.data.status){
                     setGrp(response.data.group)
+                } else {
+                    Router.push(`/chat`)
                 }
             }
             getGrpData()

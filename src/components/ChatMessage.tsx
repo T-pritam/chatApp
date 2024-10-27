@@ -32,6 +32,7 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
   const [text, setText] = useState<string>('')
   const [messages,setMessages] = useState<message[]>([])
   
+  const lastmesseges = useSelector((state:RootStateType) => state.chatList)
   const user = useSelector((state:RootStateType) => state.user)
   const pusherRef = useRef<any>(null);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
@@ -44,10 +45,7 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
 
   useEffect(() => {
     async function getMessages(){
-      console.log("senderId : ",user._id," receiverId : ",id)
       const res = await axios.get(`/api/messages/user?senderId=${user._id}&receiverId=${id}`)
-      console.log("senderId : ",user._id," receiverId : ",id)
-      console.log(res.data)
       setMessages(res.data.messages)
     }
     getMessages()
@@ -56,10 +54,15 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
 
   useEffect(() => {
     if (!pusherRef.current){
-      const channel = pusherClient.subscribe(`user-${user._id}`)
+      const channel = pusherClient.subscribe(`user`)
       channel.bind('new-message', (data : {senderId : string, receiverId : string, text : string}) => {
+        if (data.senderId === user._id) {
+          return
+        } else {
           setMessages((prev) => [...prev, {senderId : data.senderId,receiverId : data.receiverId,text : data.text,createdAt:new Date().toISOString()}]);
-      })
+          console.log("Last messages : ",data)
+          dispatch(updateMessage({id : id,message : data.text,time:new Date().toISOString()}))
+    }})
 
       return () => {
         channel.unbind('new-message')
