@@ -12,7 +12,7 @@ export async function POST(req: Request) {
             text
         })
 
-        pusherServer.trigger(`user-${senderId}`, "new-message", {
+        pusherServer.trigger(`user`, "new-message", {
             senderId,
             receiverId,
             text,

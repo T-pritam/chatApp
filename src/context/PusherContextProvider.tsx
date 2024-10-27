@@ -35,6 +35,22 @@ export function PusherContextProvider({ children }: { children: React.ReactNode 
         }
         
       },[dispatch])
+
+      useEffect(() => {
+        if (!pusherRef.current){
+            const channel = pusherClient.subscribe(`user`)
+            channel.bind('new-message', (data : {senderId : string, receiverId : string, text : string}) => {
+                console.log("Pusher Pauyload data cntext : ",data)
+                dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString()}))
+          })
+      
+            return () => {
+              channel.unbind('new-message')
+              pusherClient.unsubscribe(`user`)
+            }
+          }
+      }, [dispatch]);
+
     return <PusherContext.Provider value={null}>
         {children}
     </PusherContext.Provider>

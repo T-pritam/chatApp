@@ -61,7 +61,7 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
         } else {
           setMessages((prev) => [...prev, {senderId : data.senderId,receiverId : data.receiverId,text : data.text,createdAt:new Date().toISOString()}]);
           console.log("Last messages : ",data)
-          dispatch(updateMessage({id : id,message : data.text,time:new Date().toISOString()}))
+          dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString()}))
     }})
 
       return () => {
@@ -70,7 +70,7 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
       }
     }
     
-  },[])
+  },[dispatch])
 
   useEffect(() => {
     scrollToBottom();
