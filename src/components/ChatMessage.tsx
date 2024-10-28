@@ -5,12 +5,13 @@ import { useState,useEffect,useRef } from 'react';
 import { IoMdSend } from "react-icons/io";
 import { useSelector } from 'react-redux';
 import { RootStateType } from '@/store/userStore';
-import { pusherClient } from '@/lib/pusher';
+import { pusherClient,pusherServer } from '@/lib/pusher';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/userStore';
 import { updateMessage } from '@/store/chatListSlice';
 import axios from 'axios';
 import '@/components/css/scrollbar.css';
+import { set } from 'mongoose';
 
 interface friendDetails{
   id: string,
@@ -30,6 +31,7 @@ interface message{
 const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDetails}) => {
   const dispatch = useDispatch<AppDispatch>()
   const [text, setText] = useState<string>('')
+  const [typing,setTyping] = useState<boolean>(false)
   const [messages,setMessages] = useState<message[]>([])
   
   const lastmesseges = useSelector((state:RootStateType) => state.chatList)
@@ -62,6 +64,7 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
           setMessages((prev) => [...prev, {senderId : data.senderId,receiverId : data.receiverId,text : data.text,createdAt:new Date().toISOString()}]);
           console.log("Last messages : ",data)
           dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString()}))
+          setTyping(false)
     }})
 
       return () => {
@@ -75,6 +78,19 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const channel = pusherClient.subscribe(`user-${user._id}`);
+    channel.bind('typing-event',(data:{senderId:string,receiverId:string,isTyping:boolean})=>{
+        if(data.receiverId === user._id){
+            setTyping(data.isTyping)
+        }
+    })
+    return () => {
+        channel.unbind('typing-event')
+        pusherClient.unsubscribe(`user-${user._id}`)
+    }
+},[])
 
   const sendMessage = () => {
     if(text.trim() !== ""){
@@ -94,11 +110,22 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
     return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
   };
 
+  const handelInput =async (e: React.ChangeEvent<HTMLInputElement>) => {
+      setText(e.target.value)
+      console.log("text : ",text)
+        await axios.post(`/api/typing`,{
+            senderId : user._id,
+            receiverId : id,
+            isTyping : e.target.value != ""
+        })
+  }
+
+
   return (
     <div className='flex flex-col h-screen'>
 
       <div className='h-16 bg-gray-900' onClick={() => setDetails(true)}>
-        <UserNavbar username={username}/>
+        <UserNavbar username={username} id={id} istyping = {typing}/>
       </div>
 
       <div  ref={messageContainerRef} className='bg-gray-700 flex-1 overflow-y-auto h-screen scrollbar-thin p-4'>
@@ -126,7 +153,7 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
       </div>
 
       <div className='bg-gray-900 h-16 p-3 flex justify-around'>
-            <input type="text" placeholder='Type a message' value={text} className='bg-gray-800 w-4/6 h-10 outline-none border-8 rounded border-gray-800 text-white' onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' ? sendMessage() : null}/>
+            <input type="text" placeholder='Type a message' value={text} className='bg-gray-800 w-4/6 h-10 outline-none border-8 rounded border-gray-800 text-white' onChange={handelInput} onKeyDown={(e) => e.key === 'Enter' ? sendMessage() : null}/>
             <IoMdSend size={'2.5vw'} color='#999' className='my-auto' onClick={ sendMessage }/>
       </div>
       

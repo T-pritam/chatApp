@@ -40,10 +40,9 @@ export function PusherContextProvider({ children }: { children: React.ReactNode 
         if (!pusherRef.current){
             const channel = pusherClient.subscribe(`user`)
             channel.bind('new-message', (data : {senderId : string, receiverId : string, text : string}) => {
-                console.log("Pusher Pauyload data cntext : ",data)
+                console.log("Pusher Pauyload data context User: ",data)
                 dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString()}))
           })
-      
             return () => {
               channel.unbind('new-message')
               pusherClient.unsubscribe(`user`)
