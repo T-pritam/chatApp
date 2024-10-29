@@ -34,6 +34,12 @@ export async function POST(req: Request){
             senderUsername,  
             text  
         })
+        pusherServer.trigger("groups-last-message", "new-messages", {
+            groupId : groupId,
+            senderId,
+            senderUsername,  
+            text  
+        })
         return Response.json({ status: true, message: "Message saved" })
         
     } catch (error) {

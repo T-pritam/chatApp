@@ -17,6 +17,11 @@ export async function POST(req: Request) {
             receiverId,
             text,
         })
+        pusherServer.trigger(`user-last-message`, "new-message", {
+            senderId,
+            receiverId,
+            text,
+        })
         return Response.json({
             status: true,
             message: "Message saved"

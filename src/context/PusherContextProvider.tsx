@@ -9,7 +9,7 @@ import { updateMessage } from "@/store/chatListSlice";
 import { RootStateType } from "@/store/userStore";
 import Pusher,{Channel} from "pusher-js";
 
-const PusherContext = createContext<Channel | null>(null);
+const PusherContext = createContext<Pusher | null>(null);
 
 export function PusherContextProvider({ children }: { children: React.ReactNode }) {
     const dispatch = useDispatch()
@@ -55,4 +55,10 @@ export function PusherContextProvider({ children }: { children: React.ReactNode 
     </PusherContext.Provider>
 }
 
-export const usePusher = () => useContext(PusherContext);
+export const usePusher = () => {
+    const context = useContext(PusherContext);
+    if (!context) {
+      throw new Error("usePusher must be used within a PusherContextProvider");
+    }
+    return context;
+}

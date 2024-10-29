@@ -56,13 +56,12 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
 
   useEffect(() => {
     if (!pusherRef.current){
-      const channel = pusherClient.subscribe(`user`)
+      const channel = pusherClient.subscribe(`user-last-message`)
       channel.bind('new-message', (data : {senderId : string, receiverId : string, text : string}) => {
         if (data.senderId === user._id) {
           return
         } else {
           setMessages((prev) => [...prev, {senderId : data.senderId,receiverId : data.receiverId,text : data.text,createdAt:new Date().toISOString()}]);
-          console.log("Last messages : ",data)
           dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString()}))
           setTyping(false)
     }})

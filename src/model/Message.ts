@@ -5,6 +5,10 @@ interface IMessage extends Document {
   receiverId: mongoose.Types.ObjectId;
   groupId: mongoose.Types.ObjectId;
   text: string;
+  imageUrl?: string;
+  videoUrl?: string;
+  audioUrl?: string;
+  documentUrl?: string;
   createdAt: Date;
 }
 
@@ -12,7 +16,11 @@ const MessageSchema = new Schema<IMessage>({
   senderId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   receiverId: { type: Schema.Types.ObjectId, ref: 'User'},
   groupId: { type: Schema.Types.ObjectId, ref: 'Group'},
-  text: { type: String, required: true },
+  text: { type: String },
+  imageUrl: { type: String },
+  videoUrl: { type: String },
+  audioUrl: { type: String },
+  documentUrl: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 

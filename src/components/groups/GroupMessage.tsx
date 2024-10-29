@@ -58,7 +58,7 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
 
   useEffect(() => {
     if (!pusherRef.current){
-      const channel = pusherClient.subscribe(`groups`)
+      const channel = pusherClient.subscribe(`groups-last-message`)
       channel.bind('new-messages', (data : {groupId : string,senderId : string, text : string,senderUsername: string}) => {
         console.log("Match Id : ",data.senderId,user._id)  
         if (data.senderId === user._id) {
