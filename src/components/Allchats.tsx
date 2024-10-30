@@ -8,7 +8,7 @@ function Allchats(props: {
 }) {
   return (
   <div>
-
+    
   </div>
   )
 }

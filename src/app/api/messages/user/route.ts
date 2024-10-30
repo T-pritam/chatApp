@@ -1,27 +1,48 @@
 import dbConnect from "@/lib/db";
 import MessageModel from "@/model/Message";
 import { pusherServer } from "@/lib/pusher";
+import { v2 as cloudinary } from 'cloudinary';
+
+cloudinary.config({
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
+interface cloudinaryUploadResult {
+    public_id: string;
+    [key : string] : any
+}
 
 export async function POST(req: Request) {
     await dbConnect();
     try {  
-        const { senderId,receiverId,text,senderUsername } = await req.json()
-        await MessageModel.create({
-            senderId,
-            receiverId,
-            text
-        })
+        const formData = await req.formData();
+        const senderId = formData.get("senderId") as string;
+        const receiverId = formData.get("receiverId") as string;
+        const text = formData.get("text") as string;
+        const fileType = formData.get("fileType") as string;
+        const fileUrl = formData.get("fileUrl") as string;
 
-        pusherServer.trigger(`user`, "new-message", {
-            senderId,
-            receiverId,
-            text,
-        })
-        pusherServer.trigger(`user-last-message`, "new-message", {
-            senderId,
-            receiverId,
-            text,
-        })
+        
+
+        // const { senderId,receiverId,text } = await req.json()
+        // await MessageModel.create({
+        //     senderId,
+        //     receiverId,
+        //     text
+        // })
+
+        // pusherServer.trigger(`user`, "new-message", {
+        //     senderId,
+        //     receiverId,
+        //     text,
+        // })
+        // pusherServer.trigger(`user-last-message`, "new-message", {
+        //     senderId,
+        //     receiverId,
+        //     text,
+        // })
         return Response.json({
             status: true,
             message: "Message saved"

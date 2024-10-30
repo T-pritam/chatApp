@@ -9,9 +9,12 @@ import { pusherClient,pusherServer } from '@/lib/pusher';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/userStore';
 import { updateMessage } from '@/store/chatListSlice';
+import { Plus } from 'lucide-react';
+import { X } from 'lucide-react';
+import { toast } from 'sonner'
 import axios from 'axios';
 import '@/components/css/scrollbar.css';
-import { set } from 'mongoose';
+
 
 interface friendDetails{
   id: string,
@@ -31,8 +34,13 @@ interface message{
 const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDetails}) => {
   const dispatch = useDispatch<AppDispatch>()
   const [text, setText] = useState<string>('')
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileType, setFileType] = useState<string | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [typing,setTyping] = useState<boolean>(false)
   const [messages,setMessages] = useState<message[]>([])
+  const MAX_FILE_SIZE_BYTES = 64 * 1024 * 1024;
   
   const lastmesseges = useSelector((state:RootStateType) => state.chatList)
   const user = useSelector((state:RootStateType) => state.user)
@@ -93,11 +101,13 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
 
   const sendMessage = () => {
     if(text.trim() !== ""){
-      axios.post(`/api/messages/user`,{
-        senderId : user._id,
-        receiverId : id,
-        text
-      })
+      const formData = new FormData();
+      formData.append('receiverId', id);
+      formData.append('senderId', user._id);
+      formData.append('text', text || '');
+      formData.append('fileType', fileType || '');
+      formData.append('fileUrl', fileUrl || '');
+      axios.post(`/api/messages/user`,formData)
       setMessages([...messages,{senderId : user._id,receiverId : id,text,createdAt:new Date().toISOString()}])
       dispatch(updateMessage({id : id,message : text,time:new Date().toISOString()}))
       setText("")
@@ -119,6 +129,35 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
         })
   }
 
+  const handleIconClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setFileType(file.type)
+    setSelectedFile(file || null);
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      toast.warning("File size is too large.Select a file smaller than 64 MB.",{
+        position: "top-right",});
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setFileUrl(url);
+    
+  };
+
+  const clearFile = () => {
+    setFileUrl(null);
+    setFileType(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
 
   return (
     <div className='flex flex-col h-screen'>
@@ -127,7 +166,39 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
         <UserNavbar username={username} id={id} istyping = {typing}/>
       </div>
 
-      <div  ref={messageContainerRef} className='bg-gray-700 flex-1 overflow-y-auto h-screen scrollbar-thin p-4'>
+      {
+        fileUrl ?
+        <div className="flex-1 h-screen flex items-center justify-center relative">
+          <X className="text-[#ccc] cursor-pointer absolute top-4 left-4" onClick={clearFile} aria-hidden="true" />
+
+      {fileUrl && fileType && (
+        <div className="flex items-center justify-center h-fit">
+          {fileType.startsWith("image/") && (
+            <img
+              src={fileUrl}
+              alt="Selected File"
+              className="max-w-xs"
+            />
+          )}
+
+          {fileType.startsWith("video/") && (
+            <video
+              controls
+              className="max-w-96"
+              src={fileUrl}
+            />
+          )}
+
+          {(fileType === "application/pdf" || fileType.startsWith("text/")) && (
+            <div className="">
+              <iframe src={fileUrl} className="h-60 w-60" title="Document Preview" />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+      
+        : <div  ref={messageContainerRef} className='bg-gray-700 flex-1 overflow-y-auto h-screen scrollbar-thin p-4'>
         {
           messages.map((message,index) => (
             <div key={index}>
@@ -150,8 +221,13 @@ const ChatMessage:React.FC<friendDetails> = ({id, username, about, email, setDet
         }
         
       </div>
+      }
 
       <div className='bg-gray-900 h-16 p-3 flex justify-around'>
+            <input type="file" ref={fileInputRef} className='hidden' onChange={handleFileChange} />
+            <label onClick={handleIconClick} className='cursor-pointer'>
+                <Plus size={32} color='#999'/>
+            </label>
             <input type="text" placeholder='Type a message' value={text} className='bg-gray-800 w-4/6 h-10 outline-none border-8 rounded border-gray-800 text-white' onChange={handelInput} onKeyDown={(e) => e.key === 'Enter' ? sendMessage() : null}/>
             <IoMdSend size={'2.5vw'} color='#999' className='my-auto' onClick={ sendMessage }/>
       </div>

@@ -1,11 +1,6 @@
 // app/api/messages/route.ts
 import { NextResponse } from 'next/server';
-import cloudinary from '@/lib/cloudinary';
-import Message from '@/model/Message';
-import dbConnect from '@/lib/db';
-import { pusherServer } from '@/lib/pusher';
-import { rejects } from 'assert';
-import { Result } from 'postcss';
+import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
