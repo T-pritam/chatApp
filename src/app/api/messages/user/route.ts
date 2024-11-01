@@ -23,11 +23,12 @@ export async function POST(req: Request) {
         const text = formData.get("text") as string;
         const fileType = formData.get("fileType") as string;
         const file = formData.get("file") as File | null;
-        const originalFileName = file?.name.split(".")[0];
+        let fileUrl = "";
 
-        if (file != null) {
+        if (file != null && fileType != "") {
             const arrayBuffer = await file.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
+            const originalFileName = file?.name.split(".")[0];
 
             const Result = await new Promise<cloudinaryUploadResult>(
                 (resolve, reject) => {
@@ -57,25 +58,31 @@ export async function POST(req: Request) {
                 fileType,
                 fileUrl : Result.public_id
             })
+            fileUrl = Result.secure_url
+        } else{
+            await MessageModel.create({
+                senderId,
+                receiverId,
+                text,
+                fileType,
+                fileUrl
+            })
         }
-        
-        // const { senderId,receiverId,text } = await req.json()
-        // await MessageModel.create({
-        //     senderId,
-        //     receiverId,
-        //     text
-        // })
-
-        // pusherServer.trigger(`user`, "new-message", {
-        //     senderId,
-        //     receiverId,
-        //     text,
-        // })
-        // pusherServer.trigger(`user-last-message`, "new-message", {
-        //     senderId,
-        //     receiverId,
-        //     text,
-        // })
+        pusherServer.trigger(`user`, "new-message", {
+            senderId,
+            receiverId,
+            text,
+            fileType,
+            fileUrl,
+        })
+        pusherServer.trigger(`user-last-message`, "new-message", {
+            senderId,
+            receiverId,
+            text,
+            fileType,
+            fileUrl,
+        })
+        console.log("pusher Server Triggered")
         return Response.json({
             status: true,
             message: "Message saved"
@@ -102,8 +109,6 @@ export async function GET(req: Request) {
                 { senderId: receiverId, receiverId: senderId }
             ]
         })
-        console.log("senderId : ",senderId," receiverId : ",receiverId)
-        console.log(messages)
         return Response.json({
             status: true,
             messages

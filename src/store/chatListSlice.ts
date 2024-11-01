@@ -8,6 +8,7 @@ interface FriendChat {
     _id: string;
     username: string;
   };
+  lastMessageType: string | null;
   lastMessage: string | null;
   lastMessageTime: string | null;
 }
@@ -17,6 +18,7 @@ interface GroupChat {
     _id: string;
     name: string;
   };
+  lastMessageType: string | null;
   lastMessageSender: string | null;
   lastMessage: string | null;
   lastMessageTime: string | null;

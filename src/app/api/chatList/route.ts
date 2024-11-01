@@ -31,6 +31,7 @@ export async function GET(req: Request) {
             .exec();
         return {
             friendId,
+            lastMessageType : lastMessage ? lastMessage.fileType : null,
             lastMessage: lastMessage ? lastMessage.text : null,
             lastMessageTime: lastMessage ? lastMessage.createdAt : null,
         };
@@ -46,6 +47,7 @@ export async function GET(req: Request) {
         const sender = await UserModel.findById(lastMessage?.senderId);
         return {
           groupId,
+          lastMessageType : lastMessage ? lastMessage.fileType : null,
           lastMessage: lastMessage ? lastMessage.text : null,
           lastMessageSender: sender?.username,
           lastMessageTime: lastMessage ? lastMessage.createdAt : null,

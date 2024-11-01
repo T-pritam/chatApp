@@ -16,6 +16,9 @@ import { useDebounce } from 'use-debounce';
 import { fetchChatListById } from '@/store/chatListSlice';
 import { AppDispatch } from '@/store/userStore';
 import { useDispatch } from 'react-redux';
+import { IoCamera } from "react-icons/io5";
+import { TiDocumentText } from "react-icons/ti";
+import { IoMdVideocam } from "react-icons/io";
 import { pusherClient } from '@/lib/pusher';
 import axios from 'axios';
 
@@ -102,7 +105,15 @@ function ChatList() {
                                     : <p className='text-white text-xs'>{formatDateString(chat.lastMessageTime)}</p>
                                 }
                             </div>
-                            <p className='text-white text-sm'>{chat.lastMessage}</p>
+                            {
+                                chat.lastMessageType?.includes("image")
+                                ? <p className='text-white text-sm'><IoCamera size={24} color='#ddd'/> {chat.lastMessage}</p>
+                                : chat.lastMessageType?.includes("video") 
+                                ? <p className='text-white text-sm'><IoMdVideocam /> {chat.lastMessage}</p>
+                                : chat.lastMessageType?.includes("document")
+                                ? <p className='text-white text-sm'><TiDocumentText /> {chat.lastMessage}</p>
+                                : <p className='text-white text-sm'>{chat.lastMessage}</p>
+                            }
                         </div>
                     </div>
                     <hr className=" ml-14 border-gray-600 border-t" />
