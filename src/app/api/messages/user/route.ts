@@ -22,10 +22,43 @@ export async function POST(req: Request) {
         const receiverId = formData.get("receiverId") as string;
         const text = formData.get("text") as string;
         const fileType = formData.get("fileType") as string;
-        const fileUrl = formData.get("fileUrl") as string;
+        const file = formData.get("file") as File | null;
+        const originalFileName = file?.name.split(".")[0];
 
+        if (file != null) {
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            const Result = await new Promise<cloudinaryUploadResult>(
+                (resolve, reject) => {
+                    const uploadStream = cloudinary.uploader.upload_stream({
+                        folder: 'chat_files',
+                        resource_type: 'auto',
+                        public_id: originalFileName,
+                        use_filename: true, 
+                        unique_filename: false,
+                    },(error, result) => {
+                        if (error) {
+                            console.error('Error uploading to Cloudinary:', error);
+                            reject(error);
+                        }
+                        resolve(result as cloudinaryUploadResult);
+                    }
+                    )
+                    uploadStream.end(buffer);
+                }
+            )
+            console.log(Result)
+
+            await MessageModel.create({
+                senderId,
+                receiverId,
+                text,
+                fileType,
+                fileUrl : Result.public_id
+            })
+        }
         
-
         // const { senderId,receiverId,text } = await req.json()
         // await MessageModel.create({
         //     senderId,

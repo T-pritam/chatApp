@@ -19,18 +19,20 @@ export async function POST(request: Request) {
     try {
         const formData = await request.formData();
         const file = formData.get('file') as File | null;
+        console.log(file)
 
         if (!file) {
             return NextResponse.json({ message: 'No file provided' }, { status: 400 });
         }
 
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
 
         const Result = await new Promise<cloudinaryUploadResult>(
             (resolve,reject) => {
                 const uploadStream = cloudinary.uploader.upload_stream(
                     {
+                        resource_type: 'video',
                         folder: 'chat_files',
                     },
                     (error, result) => {
