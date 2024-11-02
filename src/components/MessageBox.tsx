@@ -2,11 +2,11 @@
 import React from 'react'
 import { LoaderCircle } from 'lucide-react';
 import { X } from 'lucide-react';
-import { CldImage } from 'next-cloudinary';
+import { CldImage, CldVideoPlayer , getCldVideoUrl } from 'next-cloudinary';
 import { message } from './ChatMessage'
-import { useEffect } from 'react';
+import { useEffect,useCallback } from 'react';
 import { pusherClient } from '@/lib/pusher';
-import { CldVideoPlayer } from 'next-cloudinary';
+import 'next-cloudinary/dist/cld-video-player.css';
 
 function MessageBox(props : {
     fileLoading: boolean,
@@ -26,6 +26,13 @@ function MessageBox(props : {
     //       props.messageContainerRef.current.scrollTop = props.messageContainerRef.current.scrollHeight;
     //     }
     //   };
+    const fetchVideoUrl = useCallback((publicId: string) => {
+      return getCldVideoUrl({
+        src: publicId,
+        width: 150,
+        height: 150,
+      })
+    },[])
     
     useEffect(() => {
         const channel = pusherClient.subscribe(`user-last-message`);
@@ -52,17 +59,17 @@ function MessageBox(props : {
   };
   
   return (
-    <div>
+    <div className=''>
         {props.fileLoading ? (
         <div className="">
           <LoaderCircle size={48} className="animate-spin text-gray-400" />
         </div>
       ) : props.fileUrl ? (
-        <div className="flex-1 h-screen flex items-center justify-center relative">
-          <X className="text-[#ccc] cursor-pointer absolute top-4 left-4" onClick={clearFile} aria-hidden="true" />
-          <div className="flex items-center justify-center h-fit">
+        <div className="flex-1 flex items-center justify-center mt-16">
+          <X className="text-[#ccc] cursor-pointer absolute top-20 left-4" onClick={clearFile} aria-hidden="true" />
+          <div className="flex items-center justify-center  ">
             {props.fileType?.startsWith("image/") && (
-              <img src={props.fileUrl} alt="Selected File" className="max-w-xs" />
+              <img src={props.fileUrl} alt="Selected File" className="max-w-60" />
             )}
             {props.fileType?.startsWith("video/") && (
               <video controls className="overflow-hidden max-w-60" src={props.fileUrl} />
@@ -84,11 +91,21 @@ function MessageBox(props : {
             </div> ):(
               message.fileType.startsWith("image/") ? (
                 <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
-                  <CldImage src={message.fileUrl} width={200} height={200} alt="Selected File" />
+                  <div className={`p-1 rounded mb-1 ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}>
+                    <CldImage src={message.fileUrl} width={200} height={200} alt="Selected File" />
+                  </div>
                 </div>
               ) : message.fileType.startsWith("video/") ? (
                 <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
-                  <CldVideoPlayer src={message.fileUrl} width={200} height={200} />
+                  <div className={`p-1 rounded mb-1 ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}>
+                    <video src={fetchVideoUrl(message.fileUrl)} controls className='max-w-xs'/>
+                  </div>
+                </div>
+              ) : message.fileType.startsWith("application/") ? (
+                <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`p-1 rounded mb-1 ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}>
+                    <h2>Hello world</h2>
+                  </div>
                 </div>
               ) : (
                 <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
