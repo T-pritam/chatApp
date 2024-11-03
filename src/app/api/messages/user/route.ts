@@ -2,6 +2,7 @@ import dbConnect from "@/lib/db";
 import MessageModel from "@/model/Message";
 import { pusherServer } from "@/lib/pusher";
 import { v2 as cloudinary } from 'cloudinary';
+import { Download } from "lucide-react";
 
 cloudinary.config({
     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -11,6 +12,7 @@ cloudinary.config({
 
 interface cloudinaryUploadResult {
     public_id: string;
+    asset_id: string;
     [key : string] : any
 }
 
@@ -43,20 +45,22 @@ export async function POST(req: Request) {
                             console.error('Error uploading to Cloudinary:', error);
                             reject(error);
                         }
-                        resolve(result as cloudinaryUploadResult);
+                        resolve(result as unknown as cloudinaryUploadResult);
                     }
                     )
                     uploadStream.end(buffer);
                 }
             )
             console.log(Result)
+            console.log("Asset id : ",Result.asset_id)
 
             await MessageModel.create({
                 senderId,
                 receiverId,
                 text,
                 fileType,
-                fileUrl : Result.public_id
+                fileUrl : Result.public_id,
+                downloadUrl : Result.asset_id
             })
             fileUrl = Result.secure_url
         } else{
@@ -65,7 +69,7 @@ export async function POST(req: Request) {
                 receiverId,
                 text,
                 fileType,
-                fileUrl
+                fileUrl,
             })
         }
         pusherServer.trigger(`user`, "new-message", {

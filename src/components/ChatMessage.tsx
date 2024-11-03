@@ -29,6 +29,7 @@ export interface message {
   text: string,
   fileType: string,
   fileUrl: string,
+  downloadUrl: string,
   createdAt: string,
 }
 
@@ -73,7 +74,7 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
           return
         } else {
           console.log("Pusher Pauyload data chat msg : ", data)
-          setMessages((prev) => [...prev, { senderId: data.senderId, receiverId: data.receiverId, fileType: data.fileType, fileUrl: data.fileUrl , text: data.text, createdAt: new Date().toISOString() }]);
+          setMessages((prev) => [...prev, { senderId: data.senderId, receiverId: data.receiverId, fileType: data.fileType, fileUrl: data.fileUrl , text: data.text, createdAt: new Date().toISOString(),downloadUrl : "" }]);
           dispatch(updateMessage({ id: data.senderId, message: data.text,  time: new Date().toISOString() }))
           setTyping(false)
         }
@@ -112,7 +113,7 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
     formData.append('fileType', fileType || '');
     formData.append('file', selectedFile || '');
     axios.post(`/api/messages/user`, formData)
-    setMessages([...messages, { senderId: user._id, receiverId: id, text, fileType: fileType || '', fileUrl: fileUrl || '' ,createdAt: new Date().toISOString() }])
+    setMessages([...messages, { senderId: user._id, receiverId: id, text, fileType: fileType || '', fileUrl: fileUrl || '', downloadUrl: "" ,createdAt: new Date().toISOString() }])
     dispatch(updateMessage({ id: id, message: text, time: new Date().toISOString() }))
     setText("")
   }
@@ -154,6 +155,7 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
       <div ref={messageContainerRef} className='bg-gray-700 flex-1 overflow-y-auto scrollbar-thin'>
         <MessageBox 
           userId = {user._id} 
+          userName = {user.username}
           fileLoading = {fileLoading}
           fileUrl = {fileUrl}
           fileType = {fileType}

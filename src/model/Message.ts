@@ -7,6 +7,7 @@ interface IMessage extends Document {
   text: string;
   fileType: string;
   fileUrl: string;
+  downloadUrl: string;
   createdAt: Date;
 }
 
@@ -17,6 +18,7 @@ const MessageSchema = new Schema<IMessage>({
   text: { type: String },
   fileType: { type: String },
   fileUrl: { type: String },
+  downloadUrl: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 

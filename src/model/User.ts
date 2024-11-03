@@ -5,6 +5,7 @@ export interface UserType extends Document {
   email: string;
   password: string;
   verifyCode: string;
+  profilePic: string;
   verifyCodeExpiry: Date; 
   isVerified: boolean;
   passwordResetToken: string;
@@ -32,6 +33,9 @@ const UserSchema: Schema<UserType> = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password is required'],
+  },
+  profilePic: {
+    type: String,
   },
   verifyCode: {
     type: String,
