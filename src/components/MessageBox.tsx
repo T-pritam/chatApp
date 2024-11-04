@@ -144,11 +144,11 @@ function MessageBox(props : {
             </div> ):(
               message.fileType.startsWith("image/") ? (
                 <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`p-1 rounded mb-1 ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}   >
-                    <CldImage src={message.fileUrl} width={200} height={200} className='cursor-pointer' alt="Selected File" onClick={() => {
+                  <div className={`p-1 rounded mb-1 max-w-sm break-words ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}   >
+                    <CldImage src={message.fileUrl} width={250} height={400} className='cursor-pointer' alt="Selected File" onClick={() => {
                       setIsMediaOpen(true)
                       setMediaData(message)
-                    }}/>
+                    }}/> <p className='line-clamp-4 text-[#ddd] w-[250px]'>{message.text}</p>
                   </div>
                 </div>
               ) : message.fileType.startsWith("video/") ? (

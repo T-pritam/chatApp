@@ -50,7 +50,7 @@ const chatListSlice = createSlice({
   name: 'chatList',
   initialState,
   reducers: {
-    updateMessage(state, action: PayloadAction<{ id: string; message: string; time: string , sender?: string}>) {
+    updateMessage(state, action: PayloadAction<{ id: string; message: string; time: string , sender?: string, lastMessageType: string}>) {
         console.log("payload : ",action.payload)
         const chat = state.data.find((item) =>
           'friendId' in item ? item.friendId._id === action.payload.id : item.groupId._id === action.payload.id

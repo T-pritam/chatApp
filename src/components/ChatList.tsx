@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootStateType } from '@/store/userStore';
 import {useState,useEffect } from 'react';
 import '../components/css/scrollbar.css';
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoVideocam } from "react-icons/io5";
 import { UserState } from '@/store/userSlice';
 import { updateMessage } from '@/store/chatListSlice';
 import formatDateString from '@/lib/formatDate';
@@ -105,15 +105,17 @@ function ChatList() {
                                     : <p className='text-white text-xs'>{formatDateString(chat.lastMessageTime)}</p>
                                 }
                             </div>
+                            <div className='text-sm mt-1 text-[#ddd]'>
                             {
                                 chat.lastMessageType?.includes("image")
-                                ? <p className='text-white text-sm'><IoCamera size={24} color='#ddd'/> {chat.lastMessage}</p>
+                                ? <div className='flex justify-start '><IoCamera size={19} color='#ddd' className='inline-block'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
                                 : chat.lastMessageType?.includes("video") 
-                                ? <p className='text-white text-sm'><IoMdVideocam /> {chat.lastMessage}</p>
+                                ? <div className='flex justify-start '><IoVideocam size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
                                 : chat.lastMessageType?.includes("document")
-                                ? <p className='text-white text-sm'><TiDocumentText /> {chat.lastMessage}</p>
-                                : <p className='text-white text-sm'>{chat.lastMessage}</p>
+                                ? <div className='flex justify-start'><TiDocumentText size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
+                                : <p className=' w-full truncate'>{chat.lastMessage}</p>
                             }
+                            </div>
                         </div>
                     </div>
                     <hr className=" ml-14 border-gray-600 border-t" />

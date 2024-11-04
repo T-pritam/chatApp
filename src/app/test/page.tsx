@@ -1,64 +1,60 @@
-'use client';
+// components/ExpandableText.tsx
+"use client";
 
-import React, { useState } from 'react';
+import { useState, useEffect, useRef } from "react";
+import './a.css'
 
-export default function Page() {
-    const [file, setFile] = useState<File | null>(null);
-    const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
-    const [fileName, setFileName] = useState<string | null>(null);
+export default function ExpandableText() {
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [showButton, setShowButton] = useState<boolean>(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = event.target.files?.[0];
-        if (selectedFile && selectedFile.type === 'application/pdf') {
-            setFile(selectedFile);
-            setFileName(selectedFile.name); // Save the original filename
-        } else {
-            alert('Please upload a PDF file.');
-        }
-    };
+  useEffect(() => {
+    if (textRef.current) {
+      // Calculate line height
+      const lineHeight = parseFloat(getComputedStyle(textRef.current).lineHeight);
+      const elementHeight = textRef.current.clientHeight;
+      const lineCount = Math.round(elementHeight / lineHeight);
 
-    const uploadPdf = async () => {
-        if (!file) return;
+      // Show button if the text is longer than 4 lines
+      setShowButton(lineCount > 4);
+    }
+  }, []);
 
-        const formData = new FormData();
-        formData.append('file', file);
+  const toggleText = () => setIsExpanded((prev) => !prev);
 
-        try {
-            const response = await fetch('/api/auth/test', {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await response.json();
+  return (
+    <div className="max-w-sm">
+      {/* Image */}
+      <img
+        src="https://via.placeholder.com/300"
+        alt="Sample"
+        className="w-full h-48 object-contain"
+      />
 
-            if (data.success) {
-                setDownloadUrl(data.url); // Use the returned URL
-            } else {
-                console.error('Upload failed:', data.message);
-            }
-        } catch (error) {
-            console.error('Error uploading PDF:', error);
-        }
-    };
+      {/* Text */}
+      <p
+        ref={textRef}
+        className={`mt-4 text-gray-800 transition-all duration-300 ${
+          isExpanded ? "" : "line-clamp-4"
+        }`}
+      >
+        This is a long paragraph of text that will be truncated to only show
+        four lines. If the text exceeds four lines, it will end with an
+        ellipsis. When the "Read More" button is clicked, the full text will be
+        displayed, allowing the user to read everything. This is great for
+        summarizing large amounts of content in a compact space.
+      </p>
 
-    return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Upload and Download PDF</h1>
-            <input type="file" accept="application/pdf" onChange={handleFileChange} />
-            <button
-                onClick={uploadPdf}
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-            >
-                Upload PDF
-            </button>
-            {downloadUrl && fileName && (
-                <a
-                    href={downloadUrl}
-                    className="mt-4 inline-block px-4 py-2 bg-green-500 text-white rounded"
-                    download={fileName} // Sets the download filename
-                >
-                    Download {fileName}
-                </a>
-            )}
-        </div>
-    );
+      {/* Read More / Show Less Button */}
+      {showButton && (
+        <button
+          onClick={toggleText}
+          className="text-blue-500 hover:underline mt-2"
+        >
+          {isExpanded ? "Show Less" : "Read More"}
+        </button>
+      )}
+    </div>
+  );
 }
