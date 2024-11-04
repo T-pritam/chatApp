@@ -57,6 +57,7 @@ const chatListSlice = createSlice({
         );
   
         if (chat) {
+          chat.lastMessageType = action.payload.lastMessageType;
           chat.lastMessage = action.payload.message;
           chat.lastMessageTime = action.payload.time;
 

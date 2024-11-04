@@ -65,7 +65,7 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
             return
           } else {
           setMessages((prevMessages) => [...prevMessages, {senderId : {username : data.senderUsername,_id : data.senderId},text : data.text,createdAt:new Date().toISOString()}])
-          dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername}))
+          dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername,lastMessageType: 'data.fileType'}))
       }})
       return () => {
         channel.unbind('new-messages')
@@ -88,7 +88,7 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
         senderUsername : user.username
       })
       setMessages([...messages,{senderId : {_id : user._id,username : user.username},text,createdAt:new Date().toISOString()}])
-      dispatch(updateMessage({id : id,message : text,time:new Date().toISOString(),sender : user.username}))
+      dispatch(updateMessage({id : id,message : text,time:new Date().toISOString(),sender : user.username,lastMessageType: "data.fileType"}))
       setText("")
     }
   }

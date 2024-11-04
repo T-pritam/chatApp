@@ -5,6 +5,7 @@ import { X } from 'lucide-react';
 import { CldImage, CldVideoPlayer , getCldVideoUrl, getCldImageUrl } from 'next-cloudinary';
 import { message } from './ChatMessage'
 import { useEffect,useCallback,useState } from 'react';
+import formatDateString from '@/lib/formatDate';
 import { pusherClient } from '@/lib/pusher';
 import 'next-cloudinary/dist/cld-video-player.css';
 import { IoArrowDown } from "react-icons/io5";
@@ -72,6 +73,17 @@ function MessageBox(props : {
     });
   };
 
+    const isSameDay = (date1: string, date2: string) => {
+      const d1 = new Date(date1);
+      const d2 = new Date(date2);
+      return d1.toDateString() === d2.toDateString();
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
   const downloadFile = (assetId: string) => {
       const fullUrl = `https://res-console.cloudinary.com/dh6nxoqzm/media_explorer_thumbnails/${assetId}/download`;
       const link = document.createElement("a");
@@ -120,7 +132,7 @@ function MessageBox(props : {
       ) : props.fileUrl ? (
         <div className="flex-1 flex items-center justify-center mt-16">
           <X className="text-[#ccc] cursor-pointer absolute top-20 left-4" onClick={clearFile} aria-hidden="true" />
-          <div className="flex items-center justify-center  ">
+          <div className="flex items-center justify-center">
             {props.fileType?.startsWith("image/") && (
               <img src={props.fileUrl} alt="Selected File" className="max-w-60" />
             )}
@@ -134,9 +146,17 @@ function MessageBox(props : {
         </div>
       ) : (
         <div ref={props.messageContainerRef} className='bg-gray-700 h-screen p-4 '>
-          {props.messages.map((message, index) => (
-            message.fileType == "" || message.fileType == null ? (
-              <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
+          {props.messages.map((message, index) => {
+            const showDate = index === 0 || !isSameDay(props.messages[index - 1].createdAt, message.createdAt);
+            return (
+              <React.Fragment key={index}>
+                {showDate && (
+                    <div className="text-center sticky my-auto p-8 ">
+                        <p className="text-sm text-gray-400 absolute right-[40%] bottom-3 px-3 py-2 bg-gray-800 rounded">{formatDateString(message.createdAt).includes(":") ? "Today" : formatDate(message.createdAt)}</p>
+                    </div>
+                )}
+            {message.fileType == "" || message.fileType == null ? (
+            <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
               <div className={`inline-block max-w-md break-words bg-opacity-80 px-2 py-1 mb-1 rounded text-white ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}>
                 <p className='leading-5 text-base'>{message.text}</p>
                 <p className='flex justify-end text-xs float-right text-[#ddd] mt-0'>{formatTime(message.createdAt)}</p>
@@ -144,20 +164,27 @@ function MessageBox(props : {
             </div> ):(
               message.fileType.startsWith("image/") ? (
                 <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`p-1 rounded mb-1 max-w-sm break-words ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}   >
-                    <CldImage src={message.fileUrl} width={250} height={400} className='cursor-pointer' alt="Selected File" onClick={() => {
+                  <div className={`p-1 rounded mb-1 max-w-sm break-words ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}>
+                    <div className='relative'>
+                    <CldImage src={message.fileUrl} width={250} height={400} className='cursor-pointer rounded' alt="Selected File" onClick={() => {
                       setIsMediaOpen(true)
                       setMediaData(message)
-                    }}/> <p className='line-clamp-4 text-[#ddd] w-[250px]'>{message.text}</p>
+                    }}/>
+                        <p className='text-[#ddd] text-xs absolute bottom-1 right-1'>{formatTime(message.createdAt)}</p>                  
+                    </div>
+                     <p className=' text-[#ddd] w-[250px]'>{message.text}</p>
                   </div>
                 </div>
               ) : message.fileType.startsWith("video/") ? (
                 <div key={index} className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
                   <div className={`p-1 rounded mb-1 ${message.senderId === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}>
+                  <div className='relative'>
                     <video src={fetchVideoUrl(message.fileUrl)} controls className='max-w-xs cursor-pointer' onClick={() => {
                       setIsMediaOpen(true)
                       setMediaData(message)
                     }}/>
+                    <p className='text-[#ddd] text-xs absolute bottom-1 right-1'>{formatTime(message.createdAt)}</p>                  
+                      </div>
                   </div>
                 </div>
               ) : message.fileType.startsWith("application/pdf") ? (
@@ -188,11 +215,13 @@ function MessageBox(props : {
                 </div>
               )
             )
+            }
+              </React.Fragment>
             )
+          }
           )}
         </div>
       )}
-
     </div>
   )
 }

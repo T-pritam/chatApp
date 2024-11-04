@@ -26,7 +26,7 @@ export function PusherContextProvider({ children }: { children: React.ReactNode 
               } else {
                 console.log("Pusher Pauyload data cntext : ",data)
                 console.log("Pusher Pauyload data cntext : ",data.groupId)
-              dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername}))
+              dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername,lastMessageType: 'data.fileType'}))
           }})
           return () => {
             channel.unbind('new-messages')
@@ -41,7 +41,7 @@ export function PusherContextProvider({ children }: { children: React.ReactNode 
             const channel = pusherClient.subscribe(`user`)
             channel.bind('new-message', (data : {senderId : string, receiverId : string, text : string}) => {
                 console.log("Pusher Pauyload data context User: ",data)
-                dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString()}))
+                dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString(),lastMessageType: 'data.fileType'}))
           })
             return () => {
               channel.unbind('new-message')

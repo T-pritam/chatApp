@@ -70,7 +70,10 @@ function ChatList() {
             <div className='mt-6 bg-gray-500 rounded-xl'>
                 
                 <Search size={20} stroke='#bbb' className='inline-block absolute ml-4 mt-2'/>
-                <input type="text" value={searchBtn} className='w-full h-9 bg-gray-500 p-1 px-14 rounded-xl outline-none' placeholder='Search' onChange={(e) => setSearchBtn(e.target.value)}/>
+                <input type="text" value={searchBtn} className='w-full h-9 bg-gray-500 p-1 px-14 rounded-xl outline-none' placeholder='Search' onChange={(e) => {
+                    setSearchBtn(e.target.value)
+                    
+                }}/>
                 {
                     searchBtn.trim() == ""
                     ? null
@@ -94,7 +97,7 @@ function ChatList() {
         <div key={index}>
           {"friendId" in chat ? (
             <div onClick={() => router.push(`/chat/${chat.friendId._id}`)}>
-                    <div className='flex justify-start p-3 gap-3 hover:bg-gray-500'>
+                    <div className='cursor-pointer flex justify-start p-3 gap-3 hover:bg-gray-500'>
                         <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
                         <div className='w-5/6'>
                             <div className='flex justify-between items-center'>
