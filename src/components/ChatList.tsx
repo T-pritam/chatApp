@@ -9,7 +9,6 @@ import {useState,useEffect } from 'react';
 import '../components/css/scrollbar.css';
 import { IoClose, IoVideocam } from "react-icons/io5";
 import { UserState } from '@/store/userSlice';
-import { updateMessage } from '@/store/chatListSlice';
 import formatDateString from '@/lib/formatDate';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from 'use-debounce';
@@ -18,8 +17,6 @@ import { AppDispatch } from '@/store/userStore';
 import { useDispatch } from 'react-redux';
 import { IoCamera } from "react-icons/io5";
 import { TiDocumentText } from "react-icons/ti";
-import { IoMdVideocam } from "react-icons/io";
-import { pusherClient } from '@/lib/pusher';
 import axios from 'axios';
 
 function ChatList() {
@@ -108,7 +105,7 @@ function ChatList() {
                                     : <p className='text-white text-xs'>{formatDateString(chat.lastMessageTime)}</p>
                                 }
                             </div>
-                            <div className='text-sm mt-1 text-[#ddd]'>
+                            <div className='text-sm mt-1 text-[#ddd] flex justify-between'>
                             {
                                 chat.lastMessageType?.includes("image")
                                 ? <div className='flex justify-start '><IoCamera size={19} color='#ddd' className='inline-block'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
@@ -118,6 +115,12 @@ function ChatList() {
                                 ? <div className='flex justify-start'><TiDocumentText size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
                                 : <p className=' w-full truncate'>{chat.lastMessage}</p>
                             }
+                            {
+                                chat.unreadMessageCount > 0
+                                ? <p className='bg-[#005c4b] w-5 h-5 flex items-center justify-center rounded-full text-black text-sm'>{chat.unreadMessageCount}</p>
+                                : null
+                            }
+                            
                             </div>
                         </div>
                     </div>

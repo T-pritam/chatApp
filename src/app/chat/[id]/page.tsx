@@ -31,7 +31,6 @@ function page({params}:{params :{ id : string }})
                 Router.push(`/chat`)
             }
             const getFriend = friends.friends.find((user) => user._id == params.id) || null
-            console.log("getFriend : ",getFriend)
             if (getFriend == null) {
                 Router.push(`/chat`)
             } else {

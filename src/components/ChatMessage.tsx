@@ -9,7 +9,7 @@ import { RootStateType } from '@/store/userStore';
 import { pusherClient } from '@/lib/pusher';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/userStore';
-import { updateMessage } from '@/store/chatListSlice';
+import { updateMessage,updateUnReadMessageCount } from '@/store/chatListSlice';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner'
 import axios from 'axios';
@@ -60,6 +60,7 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
     async function getMessages() {
       const res = await axios.get(`/api/messages/user?senderId=${user._id}&receiverId=${id}`)
       setMessages(res.data.messages)
+      dispatch(updateUnReadMessageCount({ senderId: id, unreadMessageCount: 0 }))
     }
     getMessages()
     scrollToBottom()
@@ -75,7 +76,7 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
         } else {
           console.log("Pusher Pauyload data chat msg : ", data)
           setMessages((prev) => [...prev, { senderId: data.senderId, receiverId: data.receiverId, fileType: data.fileType, fileUrl: data.fileUrl , text: data.text, createdAt: new Date().toISOString(),downloadUrl : "" }]);
-          dispatch(updateMessage({ id: data.senderId, message: data.text, lastMessageType: data.fileType ,time: new Date().toISOString() }))
+          dispatch(updateMessage({ id: data.senderId, message: data.text, lastMessageType: data.fileType ,time: new Date().toISOString(),unreadMessageCount: 0 }))
           setTyping(false)
         }
       })
@@ -114,7 +115,7 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
     formData.append('file', selectedFile || '');
     axios.post(`/api/messages/user`, formData)
     setMessages([...messages, { senderId: user._id, receiverId: id, text, fileType: fileType || '', fileUrl: fileUrl || '', downloadUrl: "" ,createdAt: new Date().toISOString() }])
-    dispatch(updateMessage({ id: id, message: text,lastMessageType : selectedFile?.type || '' ,time: new Date().toISOString() }))
+    dispatch(updateMessage({ id: id, message: text,lastMessageType : selectedFile?.type || '' ,time: new Date().toISOString(), unreadMessageCount: 0 }))
     setText("")
   }
 

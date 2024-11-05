@@ -21,6 +21,7 @@ export async function GET(req: Request) {
         }
         const friendMessages = await Promise.all(
         user.friends.map(async (friendId) => {
+        const frndId = friendId._id.toString();
         const lastMessage = await Message.findOne({
             $or: [
             { senderId: id, receiverId: friendId },
@@ -29,11 +30,18 @@ export async function GET(req: Request) {
         })
             .sort({ createdAt: -1 })
             .exec();
+          
+            const unreadMessageEntry = user.unReadMessages.find(
+              (msg: any) => msg.id === frndId
+            );
+            const unreadMessageCount = unreadMessageEntry ? unreadMessageEntry.count : 0;
+            
         return {
             friendId,
             lastMessageType : lastMessage ? lastMessage.fileType : null,
             lastMessage: lastMessage ? lastMessage.text : null,
             lastMessageTime: lastMessage ? lastMessage.createdAt : null,
+            unreadMessageCount,  
         };
         })
     );

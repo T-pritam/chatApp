@@ -39,11 +39,13 @@ export async function POST(req: Request) {
                 recieverUser.friends.push(sender)
                 await UserModel.updateOne(
                     { _id: sender },
-                    { $pull: { friendRequest: recieverUser._id } }
+                    { $pull: { friendRequest: recieverUser._id },
+                      $push: { unReadMessages: { id: reciever, count: 0 } } }
                   );
                 await UserModel.updateOne(
                     { _id: reciever },
-                    { $pull: { friendRequestReceived: senderUser._id } }
+                    { $pull: { friendRequestReceived: senderUser._id },
+                      $push: { unReadMessages: { id: sender, count: 0 } } }
                   );
                 senderUser.save()
                 recieverUser.save()

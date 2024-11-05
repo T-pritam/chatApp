@@ -11,6 +11,7 @@ interface FriendChat {
   lastMessageType: string | null;
   lastMessage: string | null;
   lastMessageTime: string | null;
+  unreadMessageCount: number;
 }
 
 interface GroupChat {
@@ -22,6 +23,7 @@ interface GroupChat {
   lastMessageSender: string | null;
   lastMessage: string | null;
   lastMessageTime: string | null;
+  unreadMessageCount: number;
 }
 
 interface ChatListState {
@@ -50,7 +52,7 @@ const chatListSlice = createSlice({
   name: 'chatList',
   initialState,
   reducers: {
-    updateMessage(state, action: PayloadAction<{ id: string; message: string; time: string , sender?: string, lastMessageType: string}>) {
+    updateMessage(state, action: PayloadAction<{ id: string; message: string; time: string , sender?: string, lastMessageType: string,unreadMessageCount:number}>) {
         console.log("payload : ",action.payload)
         const chat = state.data.find((item) =>
           'friendId' in item ? item.friendId._id === action.payload.id : item.groupId._id === action.payload.id
@@ -73,6 +75,21 @@ const chatListSlice = createSlice({
 
         }
         
+      },
+      updateUnReadMessageCount(state, action: PayloadAction<{ senderId: string; unreadMessageCount: number }>) {
+        console.log("payload : ",action.payload)
+        console.log("Data : ",state.data)
+        const chat = state.data.find((item) =>
+          'friendId' in item ? item.friendId._id === action.payload.senderId : item.groupId._id === action.payload.senderId
+        );
+        console.log("chat : ",chat)
+        if (chat) {
+          if (action.payload.unreadMessageCount === 0) {
+            chat.unreadMessageCount = 0;
+          } else {
+            chat.unreadMessageCount += action.payload.unreadMessageCount;
+          }
+        }
       }
   },
   extraReducers: (builder) => {
@@ -85,5 +102,5 @@ const chatListSlice = createSlice({
   }
 });
 
-export const { updateMessage } = chatListSlice.actions;
+export const { updateMessage,updateUnReadMessageCount } = chatListSlice.actions;
 export default chatListSlice.reducer;

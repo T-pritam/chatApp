@@ -2,7 +2,7 @@
 import React from 'react'
 import { LoaderCircle } from 'lucide-react';
 import { X } from 'lucide-react';
-import { CldImage, CldVideoPlayer , getCldVideoUrl, getCldImageUrl } from 'next-cloudinary';
+import { CldImage , getCldVideoUrl, getCldImageUrl } from 'next-cloudinary';
 import { message } from './ChatMessage'
 import { useEffect,useCallback,useState } from 'react';
 import formatDateString from '@/lib/formatDate';

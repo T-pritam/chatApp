@@ -2,7 +2,7 @@ import dbConnect from "@/lib/db";
 import MessageModel from "@/model/Message";
 import { pusherServer } from "@/lib/pusher";
 import { v2 as cloudinary } from 'cloudinary';
-import { Download } from "lucide-react";
+import UserModel from "@/model/User";
 
 cloudinary.config({
     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -72,6 +72,10 @@ export async function POST(req: Request) {
                 fileUrl,
             })
         }
+        await UserModel.updateOne(
+            { _id: receiverId, 'unReadMessages.id': senderId },
+            { $inc: { 'unReadMessages.$.count': 1 } }
+        );
         pusherServer.trigger(`user`, "new-message", {
             senderId,
             receiverId,
@@ -113,6 +117,10 @@ export async function GET(req: Request) {
                 { senderId: receiverId, receiverId: senderId }
             ]
         })
+        await UserModel.updateOne(
+            { _id: senderId, 'unReadMessages.id': receiverId },
+            { $set: { 'unReadMessages.$.count': 0 } }
+        );
         return Response.json({
             status: true,
             messages

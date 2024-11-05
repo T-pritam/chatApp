@@ -5,9 +5,10 @@ import { createContext,useContext } from "react";
 import { pusherClient } from "@/lib/pusher";
 import { useDispatch,useSelector } from "react-redux";
 import { useEffect } from "react";
-import { updateMessage } from "@/store/chatListSlice";
+import { updateMessage,updateUnReadMessageCount } from "@/store/chatListSlice";
 import { RootStateType } from "@/store/userStore";
-import Pusher,{Channel} from "pusher-js";
+import Pusher from "pusher-js";
+
 
 const PusherContext = createContext<Pusher | null>(null);
 
@@ -26,7 +27,7 @@ export function PusherContextProvider({ children }: { children: React.ReactNode 
               } else {
                 console.log("Pusher Pauyload data cntext : ",data)
                 console.log("Pusher Pauyload data cntext : ",data.groupId)
-              dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername,lastMessageType: 'data.fileType'}))
+              dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername,lastMessageType: 'data.fileType',unreadMessageCount:0}))
           }})
           return () => {
             channel.unbind('new-messages')
@@ -41,7 +42,8 @@ export function PusherContextProvider({ children }: { children: React.ReactNode 
             const channel = pusherClient.subscribe(`user`)
             channel.bind('new-message', (data : {senderId : string, receiverId : string, text : string}) => {
                 console.log("Pusher Pauyload data context User: ",data)
-                dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString(),lastMessageType: 'data.fileType'}))
+                dispatch(updateMessage({id :data.senderId,message : data.text,time:new Date().toISOString(),lastMessageType: 'data.fileType',unreadMessageCount: 0}))
+                dispatch(updateUnReadMessageCount({senderId : data.senderId,unreadMessageCount : 1}))
           })
             return () => {
               channel.unbind('new-message')
