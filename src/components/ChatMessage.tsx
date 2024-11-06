@@ -45,7 +45,6 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
   const [messages, setMessages] = useState<message[]>([])
   const MAX_FILE_SIZE_BYTES = 64 * 1024 * 1024;
 
-  const lastMessages = useSelector((state: RootStateType) => state.chatList)
   const user = useSelector((state: RootStateType) => state.user)
   const pusherRef = useRef<any>(null);
   const messageContainerRef = useRef<HTMLDivElement | null>(null);
@@ -69,14 +68,15 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
   useEffect(() => {
     if (!pusherRef.current) {
       const channel = pusherClient.subscribe(`user-last-message`)
-      channel.bind('new-message', (data: { senderId: string, receiverId: string, text: string, fileType: string,fileUrl: string }) => {
+      channel.bind('new-message', (data: { senderId: string, receiverId: string, text: string, fileType: string,fileUrl: string, downloadUrl: string }) => {
         console.log("Pusher Pauyload data chat msg : ", data)
         if (data.senderId === user._id) {
           return
         } else {
           console.log("Pusher Pauyload data chat msg : ", data)
-          setMessages((prev) => [...prev, { senderId: data.senderId, receiverId: data.receiverId, fileType: data.fileType, fileUrl: data.fileUrl , text: data.text, createdAt: new Date().toISOString(),downloadUrl : "" }]);
-          dispatch(updateMessage({ id: data.senderId, message: data.text, lastMessageType: data.fileType ,time: new Date().toISOString(),unreadMessageCount: 0 }))
+          setMessages((prev) => [...prev, { senderId: data.senderId, receiverId: data.receiverId, fileType: data.fileType, fileUrl: data.fileUrl , text: data.text, createdAt: new Date().toISOString(),downloadUrl : data.downloadUrl }]);
+          dispatch(updateMessage({ id: data.senderId, message: data.text, lastMessageType: data.fileType ,time: new Date().toISOString()}))
+          dispatch(updateUnReadMessageCount({ senderId: data.senderId, unreadMessageCount: -1 }))
           setTyping(false)
         }
       })
@@ -105,7 +105,7 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
     }
   }, [])
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     setFileUrl(null);
     const formData = new FormData();
     formData.append('receiverId', id);
@@ -113,10 +113,15 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
     formData.append('text', text || '');
     formData.append('fileType', fileType || '');
     formData.append('file', selectedFile || '');
-    axios.post(`/api/messages/user`, formData)
-    setMessages([...messages, { senderId: user._id, receiverId: id, text, fileType: fileType || '', fileUrl: fileUrl || '', downloadUrl: "" ,createdAt: new Date().toISOString() }])
-    dispatch(updateMessage({ id: id, message: text,lastMessageType : selectedFile?.type || '' ,time: new Date().toISOString(), unreadMessageCount: 0 }))
+    const res = await axios.post(`/api/messages/user`, formData)
+    setMessages([...messages, { senderId: user._id, receiverId: id, text, fileType: fileType || '', fileUrl: res.data.fileUrl || '', downloadUrl: res.data.downloadUrl ||  "" ,createdAt: new Date().toISOString() }])
+    dispatch(updateMessage({ id: id, message: text,lastMessageType : selectedFile?.type || '' ,time: new Date().toISOString()}))
     setText("")
+    scrollToBottom();
+    setFileUrl(null)
+    setFileLoading(false)
+    setSelectedFile(null)
+    setFileType(null)
   }
 
   const handleIconClick = () => {
@@ -130,7 +135,12 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
     if (!file) return;
     try {
       setFileLoading(true)
-      if (file.size > MAX_FILE_SIZE_BYTES) {
+      console.log(file.name,file.type)
+      if (file.type !== "video/mp4" || file.type.includes("image") || file.type.includes("application/pdf")) {
+        toast.error("Invalid file type. Please select a video file.", {
+          position: "top-right",
+        })
+      } else if (file.size > MAX_FILE_SIZE_BYTES) {
         toast.warning("File size is too large. Select a file smaller than 64 MB.", {
           position: "top-right",
         });

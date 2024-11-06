@@ -26,6 +26,7 @@ export async function POST(req: Request) {
         const fileType = formData.get("fileType") as string;
         const file = formData.get("file") as File | null;
         let fileUrl = "";
+        let downloadUrl = "";
 
         if (file != null && fileType != "") {
             const arrayBuffer = await file.arrayBuffer();
@@ -62,7 +63,8 @@ export async function POST(req: Request) {
                 fileUrl : Result.public_id,
                 downloadUrl : Result.asset_id
             })
-            fileUrl = Result.secure_url
+            fileUrl = Result.public_id
+            downloadUrl = Result.asset_id
         } else{
             await MessageModel.create({
                 senderId,
@@ -82,6 +84,7 @@ export async function POST(req: Request) {
             text,
             fileType,
             fileUrl,
+            downloadUrl
         })
         pusherServer.trigger(`user-last-message`, "new-message", {
             senderId,
@@ -89,11 +92,14 @@ export async function POST(req: Request) {
             text,
             fileType,
             fileUrl,
+            downloadUrl
         })
         console.log("pusher Server Triggered")
         return Response.json({
             status: true,
-            message: "Message saved"
+            message: "Message saved",
+            fileUrl,
+            downloadUrl
         })
 
     } catch (error) {   
@@ -128,7 +134,6 @@ export async function GET(req: Request) {
     } catch (error) {
         console.log(error)
         return Response.json({
-            
         })
     }
 

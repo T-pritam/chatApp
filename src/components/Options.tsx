@@ -56,9 +56,6 @@ function Options() {
               Groups
           </span>
         </div>
-        
-        <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
-        <MessageSquareMore size={36} stroke='#bbb' className='cursor-pointer'/>
     </div>
 
     

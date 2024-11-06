@@ -56,9 +56,9 @@ function MessageBox(props : {
     }
   };
 
-//   useEffect(() => {
-//     scrollToBottom();
-//   }, [props.messages]);
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [props.messages]);
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -198,7 +198,7 @@ function MessageBox(props : {
                     
                       <div className={`h-16 rounded flex justify-between mx-auto p-3 ${message.senderId === props.userId ? 'bg-[#125347]' : 'bg-[#3b3f3f47]'}`}>
                         <div>
-                          <p className='text-[#ddd] text-md'>{message.fileUrl.replace("chat_files/", "")}.pdf</p>
+                          <p className='text-[#ddd] text-md truncate w-64'>{message.fileUrl.replace("chat_files/", "")}.pdf</p>
                           <p className='text-[#bbb] text-xs'>PDF</p>
                         </div>
                         <div className='flex items-center justify-center w-8 h-8 border border-gray-500 rounded-full'>

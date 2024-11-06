@@ -9,10 +9,10 @@ import { pusherClient } from '@/lib/pusher';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/store/userStore';
 import { updateMessage } from '@/store/chatListSlice';
-import { UserState } from '@/store/userSlice';
+import MessageBoxGrp from './MessageBoxGrp';
+import { toast } from 'sonner'
 import axios from 'axios';
 import '@/components/css/scrollbar.css';
-import { group } from 'console';
 
 interface groupType{
     _id: string,
@@ -29,6 +29,9 @@ interface friendDetails{
 interface message{
   senderId: groupType,
   text: string,
+  fileType: string,
+  fileUrl: string,
+  downloadUrl: string,
   createdAt : string,
 }
 
@@ -36,6 +39,13 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
   const dispatch = useDispatch<AppDispatch>()
   const [text, setText] = useState<string>('')
   const [messages,setMessages] = useState<message[]>([])
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [fileLoading, setFileLoading] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileType, setFileType] = useState<string | null>(null);
+  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const [typing, setTyping] = useState<boolean>(false)
+  const MAX_FILE_SIZE_BYTES = 64 * 1024 * 1024;
   
   const user = useSelector((state:RootStateType) => state.user)
   const pusherRef = useRef<any>(null);
@@ -51,6 +61,7 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
     async function getMessages(){
       const res = await axios.get(`/api/messages/group?id=${id}`)
       setMessages(res.data.messages)
+      //TODO : Update Unread Message Count
     }
     getMessages()
     scrollToBottom()
@@ -59,13 +70,14 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
   useEffect(() => {
     if (!pusherRef.current){
       const channel = pusherClient.subscribe(`groups-last-message`)
-      channel.bind('new-messages', (data : {groupId : string,senderId : string, text : string,senderUsername: string}) => {
+      channel.bind('new-messages', (data : {groupId : string,senderId : string, text : string,senderUsername: string,fileType : string,fileUrl : string,downloadUrl : string}) => {
         console.log("Match Id : ",data.senderId,user._id)  
         if (data.senderId === user._id) {
             return
           } else {
-          setMessages((prevMessages) => [...prevMessages, {senderId : {username : data.senderUsername,_id : data.senderId},text : data.text,createdAt:new Date().toISOString()}])
+          setMessages((prevMessages) => [...prevMessages, {senderId : {username : data.senderUsername,_id : data.senderId},text : data.text,createdAt:new Date().toISOString(),fileType : data.fileType || '',fileUrl : data.fileUrl || '',downloadUrl : data.downloadUrl || ""}])
           dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername,lastMessageType: 'data.fileType'}))
+          //TODO : Update Unread Message Count
       }})
       return () => {
         channel.unbind('new-messages')
@@ -79,23 +91,62 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
     scrollToBottom();
   }, [messages]);
 
-  const sendMessage = () => {
-    if(text.trim() !== ""){
-      axios.post(`/api/messages/group`,{
-        senderId : user._id,
-        groupId : id,
-        text,
-        senderUsername : user.username
-      })
-      setMessages([...messages,{senderId : {_id : user._id,username : user.username},text,createdAt:new Date().toISOString()}])
-      dispatch(updateMessage({id : id,message : text,time:new Date().toISOString(),sender : user.username,lastMessageType: "data.fileType"}))
-      setText("")
-    }
+  const sendMessage = async() => {
+    setFileUrl(null);
+    const formData = new FormData();
+    formData.append('senderId', user._id);
+    formData.append('groupId', id);
+    formData.append('senderUsername', user.username);
+    formData.append('text', text || '');
+    formData.append('fileType', fileType || '');
+    formData.append('file', selectedFile || '');
+    const res = await axios.post(`/api/messages/user`, formData)
+    // setMessages([...messages, { senderId: user._id, receiverId: id, text, fileType: fileType || '', fileUrl: res.data.fileUrl || '', downloadUrl: res.data.downloadUrl ||  "" ,createdAt: new Date().toISOString() }])
+    dispatch(updateMessage({ id: id, message: text,lastMessageType : selectedFile?.type || '' ,time: new Date().toISOString()}))
+    setText("")
+    scrollToBottom();
+    setFileUrl(null)
+    setFileLoading(false)
+    setSelectedFile(null)
+    setFileType(null)
   }
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString); // Convert string to Date object
     return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleIconClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      setFileLoading(true)
+      if (file.type !== "video/mp4" || file.type.includes("image") || file.type.includes("application/pdf")) {
+        toast.error("Invalid file type. Please select a video file.", {
+          position: "top-right",
+        })
+      } else if (file.size > MAX_FILE_SIZE_BYTES) {
+        toast.warning("File size is too large. Select a file smaller than 64 MB.", {
+          position: "top-right",
+          duration: 3000
+        });
+        return
+      }
+      setSelectedFile(file)
+      setFileType(file.type)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setFileLoading(false)
+    }
+    const url = URL.createObjectURL(file);
+    setFileUrl(url);
   };
 
   return (

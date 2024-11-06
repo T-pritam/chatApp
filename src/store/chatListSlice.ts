@@ -52,7 +52,7 @@ const chatListSlice = createSlice({
   name: 'chatList',
   initialState,
   reducers: {
-    updateMessage(state, action: PayloadAction<{ id: string; message: string; time: string , sender?: string, lastMessageType: string,unreadMessageCount:number}>) {
+    updateMessage(state, action: PayloadAction<{ id: string; message: string; time: string , sender?: string, lastMessageType: string}>) {
         console.log("payload : ",action.payload)
         const chat = state.data.find((item) =>
           'friendId' in item ? item.friendId._id === action.payload.id : item.groupId._id === action.payload.id
@@ -79,15 +79,17 @@ const chatListSlice = createSlice({
         console.log("Data : ",state.data)
         const chat = state.data.find((item) =>
           'friendId' in item ? item.friendId._id === action.payload.senderId : item.groupId._id === action.payload.senderId
-        );
-        console.log("chat : ",chat)
+      );
+        console.log("chat : ",chat?.unreadMessageCount)
         if (chat) {
-          if (action.payload.unreadMessageCount === 0) {
+          if (action.payload.unreadMessageCount === 0 || action.payload.unreadMessageCount === -1){
             chat.unreadMessageCount = 0;
-          } else {
+          } 
+          else {
             chat.unreadMessageCount += action.payload.unreadMessageCount;
           }
         }
+        console.log("chat : ",chat?.unreadMessageCount)
       }
   },
   extraReducers: (builder) => {

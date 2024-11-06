@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import { useEffect,useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {PusherContextProvider} from '@/context/PusherContextProvider';
+// import { setupPusherConnection } from '@/lib/pusher';
 
 
 interface RootLayoutProps {
@@ -23,7 +24,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   
 
   useEffect(() => {
-    
+    // setupPusherConnection()
     const token = localStorage.getItem('token')
     if(!token){
       router.push("/auth/signin") 

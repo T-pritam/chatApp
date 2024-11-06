@@ -17,7 +17,6 @@ import { AppDispatch } from '@/store/userStore';
 import { useDispatch } from 'react-redux';
 import { IoCamera } from "react-icons/io5";
 import { TiDocumentText } from "react-icons/ti";
-import axios from 'axios';
 
 function ChatList() {
     const dispatch = useDispatch<AppDispatch>()
@@ -110,9 +109,9 @@ function ChatList() {
                                 chat.lastMessageType?.includes("image")
                                 ? <div className='flex justify-start '><IoCamera size={19} color='#ddd' className='inline-block'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
                                 : chat.lastMessageType?.includes("video") 
-                                ? <div className='flex justify-start '><IoVideocam size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
-                                : chat.lastMessageType?.includes("document")
-                                ? <div className='flex justify-start'><TiDocumentText size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
+                                ? <div className='flex justify-start '><IoVideocam size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Video" : chat.lastMessage }</p></div>
+                                : chat.lastMessageType?.includes("application")
+                                ? <div className='flex justify-start'><TiDocumentText size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Document" : chat.lastMessage }</p></div>
                                 : <p className=' w-full truncate'>{chat.lastMessage}</p>
                             }
                             {
