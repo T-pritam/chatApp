@@ -22,5 +22,5 @@ export default function formatDateString(dateString: string): string {
     }
 
     // Otherwise, return full date with month and year
-    return inputDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    return inputDate.toLocaleDateString();
 }

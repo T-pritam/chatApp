@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { RootStateType } from './userStore';
+import { useRouter } from 'next/router';
 import axios from 'axios';
-import { string } from 'zod';
+
 
 interface FriendChat {
   friendId: {
@@ -72,9 +72,7 @@ const chatListSlice = createSlice({
             const timeB = b.lastMessageTime ? new Date(b.lastMessageTime).getTime() : 0;
             return timeB - timeA; // Sort in descending order
           });
-
         }
-        
       },
       updateUnReadMessageCount(state, action: PayloadAction<{ senderId: string; unreadMessageCount: number }>) {
         console.log("payload : ",action.payload)
