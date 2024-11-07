@@ -11,6 +11,7 @@ import { AppDispatch } from '@/store/userStore';
 import { updateMessage } from '@/store/chatListSlice';
 import MessageBoxGrp from './MessageBoxGrp';
 import { toast } from 'sonner'
+import { Plus } from 'lucide-react';
 import axios from 'axios';
 import '@/components/css/scrollbar.css';
 
@@ -26,7 +27,7 @@ interface friendDetails{
   setDetails: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-interface message{
+export interface message{
   senderId: groupType,
   text: string,
   fileType: string,
@@ -101,8 +102,8 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
     formData.append('fileType', fileType || '');
     formData.append('file', selectedFile || '');
     const res = await axios.post(`/api/messages/user`, formData)
-    // setMessages([...messages, { senderId: user._id, receiverId: id, text, fileType: fileType || '', fileUrl: res.data.fileUrl || '', downloadUrl: res.data.downloadUrl ||  "" ,createdAt: new Date().toISOString() }])
-    dispatch(updateMessage({ id: id, message: text,lastMessageType : selectedFile?.type || '' ,time: new Date().toISOString()}))
+    setMessages([...messages, {senderId : {_id : user._id,username : user.username}, text, fileType: fileType || '', fileUrl: res.data.fileUrl || '', downloadUrl: res.data.downloadUrl ||  "" ,createdAt: new Date().toISOString() }])
+    dispatch(updateMessage({ id: id, message: text,sender : user.username,lastMessageType : fileType || '' ,time: new Date().toISOString()}))
     setText("")
     scrollToBottom();
     setFileUrl(null)
@@ -127,26 +128,32 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
     if (!file) return;
     try {
       setFileLoading(true)
-      if (file.type !== "video/mp4" || file.type.includes("image") || file.type.includes("application/pdf")) {
-        toast.error("Invalid file type. Please select a video file.", {
-          position: "top-right",
-        })
-      } else if (file.size > MAX_FILE_SIZE_BYTES) {
-        toast.warning("File size is too large. Select a file smaller than 64 MB.", {
-          position: "top-right",
-          duration: 3000
-        });
-        return
+      console.log(file.name,file.type)
+      if (file.type === "video/mp4" || file.type.includes("image") || file.type.includes("application/pdf")) {
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+          toast.warning("File size is too large. Select a file smaller than 64 MB.", {
+            position: "top-right",
+            duration: 3000
+          });
+          return
+        }
+        setSelectedFile(file)
+        setFileType(file.type)
+        const url = URL.createObjectURL(file);
+        setFileUrl(url);
+      } else {
+          toast.error("Invalid file type.", {
+            position: "top-right",
+            duration: 3000
+          })
+          setSelectedFile(null)
+          setFileType(null)
       }
-      setSelectedFile(file)
-      setFileType(file.type)
     } catch (err) {
       console.log(err)
     } finally {
       setFileLoading(false)
     }
-    const url = URL.createObjectURL(file);
-    setFileUrl(url);
   };
 
   return (
@@ -157,31 +164,30 @@ const GroupMessage:React.FC<friendDetails> = ({id, name, members, setDetails}) =
       </div>
 
       <div  ref={messageContainerRef} className='bg-gray-700 flex-1 overflow-y-auto h-screen scrollbar-thin p-4'>
-        {
-          messages.map((message,index) => (
-            <div key={index}>
-              <div className={`flex ${message.senderId._id === user._id ? 'justify-end' : 'justify-start'}`}>
-          <div
-            className={`inline-block max-w-md break-words bg-opacity-80 px-2 py-1 mb-1 rounded text-white ${
-              message.senderId._id === user._id ? 'bg-[#005c4b]' : 'bg-gray-500'
-            }`}
-          >
-            <div>
-                <p>{message.senderId._id === user._id ? null : message.senderId.username}</p>
-               <p className='leading-5 text-base'>{message.text}</p>
-               <p className='flex justify-end text-xs float-right text-[#ddd] mt-0'>{formatTime(message.createdAt)}</p>
-            </div>
-          </div>
-        </div>
-            </div>
-          ))
-        }
-        
+        <MessageBoxGrp 
+           userId = {user._id} 
+           userName = {user.username}
+           fileLoading = {fileLoading}
+           fileUrl = {fileUrl}
+           fileType = {fileType}
+           messages = {messages}
+           messageContainerRef = {messageContainerRef}
+           setFileUrl = {setFileUrl}
+           setFileType = {setFileType}
+           fileInputRef = {fileInputRef}
+           setFileLoading = {setFileLoading}
+        />
       </div>
 
       <div className='bg-gray-900 h-16 p-3 flex justify-around'>
-            <input type="text" placeholder='Type a message' value={text} className='bg-gray-800 w-4/6 h-10 outline-none border-8 rounded border-gray-800 text-white' onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' ? sendMessage() : null}/>
-            <IoMdSend size={'2.5vw'} color='#999' className='my-auto' onClick={ sendMessage }/>
+        <input type="file" ref={fileInputRef} className='hidden' onChange={handleFileChange} />
+        <label onClick={handleIconClick} className='cursor-pointer'>
+          <Plus size={32} color='#999' />
+        </label>
+        <input type="text" placeholder='Type a message' value={text} className='bg-gray-800 w-4/6 h-10 outline-none border-8 rounded border-gray-800 text-white' onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' ? sendMessage() : null}/>
+        <button className='h-10 w-10 rounded-full flex justify-center items-center bg-[#005c4b] ml-2 cursor-pointer' onClick={sendMessage}>
+          <IoMdSend size={20} color='#ddd' />
+        </button>
       </div>
       
     </div>

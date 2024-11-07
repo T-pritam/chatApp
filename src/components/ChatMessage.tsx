@@ -115,7 +115,7 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
     formData.append('file', selectedFile || '');
     const res = await axios.post(`/api/messages/user`, formData)
     setMessages([...messages, { senderId: user._id, receiverId: id, text, fileType: fileType || '', fileUrl: res.data.fileUrl || '', downloadUrl: res.data.downloadUrl ||  "" ,createdAt: new Date().toISOString() }])
-    dispatch(updateMessage({ id: id, message: text,lastMessageType : selectedFile?.type || '' ,time: new Date().toISOString()}))
+    dispatch(updateMessage({ id: id, message: text,lastMessageType : fileType || '' ,time: new Date().toISOString()}))
     setText("")
     scrollToBottom();
     setFileUrl(null)
@@ -136,25 +136,31 @@ const ChatMessage: React.FC<friendDetails> = ({ id, username, about, email, setD
     try {
       setFileLoading(true)
       console.log(file.name,file.type)
-      if (file.type !== "video/mp4" || file.type.includes("image") || file.type.includes("application/pdf")) {
-        toast.error("Invalid file type. Please select a video file.", {
-          position: "top-right",
-        })
-      } else if (file.size > MAX_FILE_SIZE_BYTES) {
-        toast.warning("File size is too large. Select a file smaller than 64 MB.", {
-          position: "top-right",
-        });
-        return
+      if (file.type === "video/mp4" || file.type.includes("image") || file.type.includes("application/pdf")) {
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+          toast.warning("File size is too large. Select a file smaller than 64 MB.", {
+            position: "top-right",
+            duration: 3000
+          });
+          return
+        }
+        setSelectedFile(file)
+        setFileType(file.type)
+        const url = URL.createObjectURL(file);
+        setFileUrl(url);
+      } else {
+          toast.error("Invalid file type.", {
+            position: "top-right",
+            duration: 3000
+          })
+          setSelectedFile(null)
+          setFileType(null)
       }
-      setSelectedFile(file)
-      setFileType(file.type)
     } catch (err) {
       console.log(err)
     } finally {
       setFileLoading(false)
     }
-    const url = URL.createObjectURL(file);
-    setFileUrl(url);
   };
 
   return (

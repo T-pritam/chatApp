@@ -17,12 +17,22 @@ export async function POST(request: Request) {
             admins : [admins],
             createdBy : admins
         })
-        console.log(group._id)
-        members.forEach(async (member:string) => {
-            console.log(member)
-            await UserModel.findByIdAndUpdate(member, {$push : {groups : new mongoose.mongo.ObjectId(group._id)}})
-        })
-        await UserModel.findByIdAndUpdate(admins, {$push : {groups : new mongoose.mongo.ObjectId(group._id)}})
+        // members.forEach(async (member:string) => {
+        //     console.log(member)
+        //     await UserModel.findByIdAndUpdate(member, {$push : {groups : new mongoose.mongo.ObjectId(group._id)}})
+        // })
+        // await UserModel.findByIdAndUpdate(admins, {$push : {groups : new mongoose.mongo.ObjectId(group._id)}})
+        const allUserIds = [admins, ...members];
+        await Promise.all(
+            allUserIds.map(async (userId) => {
+              await UserModel.findByIdAndUpdate(userId, {
+                $push: {
+                  groups: group._id,
+                  unReadMessages: { id: group._id, count: 0 },
+                },
+              });
+            })
+          );
         return Response.json({
             status: true,
             message: "Group created successfully",

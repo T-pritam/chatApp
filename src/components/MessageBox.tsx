@@ -40,13 +40,6 @@ function MessageBox(props : {
         height: 150,
       })
     },[])
-    
-    useEffect(() => {
-        const channel = pusherClient.subscribe(`user-last-message`);
-        channel.bind('new-message', (data: { senderId: string, receiverId: string, text: string, fileType: string,fileUrl: string }) =>{
-            console.log("Data : ",data)
-        })
-    },[])
 
   const clearFile = () => {
     props.setFileUrl(null);
@@ -73,7 +66,7 @@ function MessageBox(props : {
     });
   };
 
-    const isSameDay = (date1: string, date2: string) => {
+  const isSameDay = (date1: string, date2: string) => {
       const d1 = new Date(date1);
       const d2 = new Date(date2);
       return d1.toDateString() === d2.toDateString();
@@ -92,7 +85,7 @@ function MessageBox(props : {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    };
+  };
 
   return (
     
@@ -185,6 +178,7 @@ function MessageBox(props : {
                     }}/>
                     <p className='text-[#ddd] text-xs absolute bottom-1 right-1'>{formatTime(message.createdAt)}</p>                  
                       </div>
+                      <p className=' text-[#ddd] w-[250px]'>{message.text}</p>
                   </div>
                 </div>
               ) : message.fileType.startsWith("application/pdf") ? (
@@ -208,6 +202,7 @@ function MessageBox(props : {
                       <div className={`flex ${message.senderId === props.userId ? 'justify-end' : 'justify-start'}`}>
                         <p className='text-[#bbb] text-xs'>{formatTime(message.createdAt)}</p>
                       </div>
+                      <p className=' text-[#ddd] w-80  text-sm line-clamp-5'>{message.text}</p>
                   </div>
                 </div>
               ) : (

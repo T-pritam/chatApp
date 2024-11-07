@@ -29,7 +29,6 @@ export default function Signup() {
         setUsernameMessage("")
       }
       if (debouncedUsername) {
-        console.log(debouncedUsername)
         setIsCheckingUser(true);
         setUsernameMessage('');
         try {

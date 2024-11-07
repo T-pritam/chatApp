@@ -3,11 +3,15 @@ import { RootStateType } from "@/store/userStore";
 import { useSelector } from "react-redux";
 import { FaArrowLeft } from "react-icons/fa";
 import { User } from 'lucide-react';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { useDebounce } from 'use-debounce';
+import { Loader2 } from 'lucide-react';
+import axios,{ AxiosError } from 'axios';
+import ApiResponse from '@/schema/apiResponse';
+import { set } from 'mongoose';
 
 function CreateGroup2(props : {
     setCreate : React.Dispatch<React.SetStateAction<boolean>>,
@@ -22,7 +26,38 @@ function CreateGroup2(props : {
   const [isFocusedname, setIsFocusedname] = useState<boolean>(false);
   const [isFocuseddes, setIsFocuseddes] = useState<boolean>(false);
   const [groupname,setGroupname] = useState<string>("")
+  const [isCheckingGroupName, setIsCheckingGroupName] = useState<boolean>(false)
   const [groupdes,setGroupdes] = useState<string>("")
+  const [groupNameMsg,setGroupNameMsg] = useState<string>("")
+  const [debouncedGroupname] = useDebounce(groupname, 1000);
+
+  useEffect( () => {
+    const checkingUsernameUnique = async () => {
+      if(debouncedGroupname.trim() === ""){
+        setIsCheckingGroupName(false)
+        setGroupNameMsg("")
+      }
+      if (debouncedGroupname) {
+        console.log(debouncedGroupname)
+        setIsCheckingGroupName(true);
+        setGroupNameMsg("")
+        try {
+          const respose = await axios.get(`/api/groups/checkgroupname?groupname=${debouncedGroupname}`)
+          setGroupNameMsg(respose.data.message)
+        } catch (error) {
+          const axiosError = error as AxiosError<ApiResponse>;
+          setGroupNameMsg(
+            axiosError.response?.data.message ?? 'Error checking groupname'
+          );
+        }
+        finally{
+          setIsCheckingGroupName(false)
+        }
+      }
+    }
+    checkingUsernameUnique()
+    }, [debouncedGroupname] )
+
 
   return (
     <div>
@@ -44,6 +79,16 @@ function CreateGroup2(props : {
               <label htmlFor='name' className={`absolute left-0 transition-all duration-100 transform text-[#aaa] cursor-text ${ groupname != "" ? '-top-2  text-xs' : 'top-3  text-lg'}`} >Group name</label>
               <input id='name' type="text" className={`w-full bg-transparent outline-none mt-3  text-lg text-[#ddd]`} value={groupname} onFocus={() => setIsFocusedname(true)} onBlur={() => setIsFocusedname(false)} onChange={(e) => setGroupname(e.target.value)} autoComplete='off'/>
               <hr className={`w-full h-0.5 mt-1 transition-colors duration-300 ${isFocusedname ? 'bg-[#00a884] border-[#00a884]' : 'bg-white border-white'}`} />
+            </div>
+            <div>
+              {
+                isCheckingGroupName && (
+                  <div className='flex justify-start items-center mt-2'>
+                    <Loader2 size={20} className='text-[#bbb]' />
+                  </div>
+                )
+              }
+              <p className='text-[#aaa] text-sm mt-2'>{groupNameMsg}</p>
             </div>
             <div className="relative w-full mt-6">
               <label htmlFor='des' className={`absolute left-0 transition-all duration-200 transform text-[#aaa] cursor-text ${groupdes != "" ? '-top-2 text-xs' : 'top-3  text-lg'}`} >Group subject (optional)</label>

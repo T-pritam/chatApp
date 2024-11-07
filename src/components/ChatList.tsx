@@ -51,7 +51,6 @@ function ChatList() {
         console.log("fetch : ",fetchFriends)
     },[searchText])
 
-    
   return (
     <div className=' border border-gray-500 h-screen overflow-y-scroll scrollbar-thin' >
         <div className='sticky top-0 z-10 bg-gray-700 pb-2 p-4'>
@@ -104,14 +103,14 @@ function ChatList() {
                                     : <p className='text-white text-xs'>{formatDateString(chat.lastMessageTime)}</p>
                                 }
                             </div>
-                            <div className='text-sm mt-1 text-[#ddd] flex justify-between'>
+                            <div className='text-sm mt-1 text-[#ddd] flex justify-between w-full overflow-hidden'>
                             {
                                 chat.lastMessageType?.includes("image")
-                                ? <div className='flex justify-start '><IoCamera size={19} color='#ddd' className='inline-block'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
+                                ? <div className='flex justify-start '><IoCamera size={19} color='#ddd' className='inline-block'/><pre> </pre> <p className='w-[21rem] truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
                                 : chat.lastMessageType?.includes("video") 
-                                ? <div className='flex justify-start '><IoVideocam size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Video" : chat.lastMessage }</p></div>
+                                ? <div className='flex justify-start '><IoVideocam size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-[21rem] truncate'>{chat.lastMessage == "" ? "Video" : chat.lastMessage }</p></div>
                                 : chat.lastMessageType?.includes("application")
-                                ? <div className='flex justify-start'><TiDocumentText size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-11/12 truncate'>{chat.lastMessage == "" ? "Document" : chat.lastMessage }</p></div>
+                                ? <div className='flex justify-start'><TiDocumentText size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-[21rem] truncate'>{chat.lastMessage == "" ? "Document" : chat.lastMessage }</p></div>
                                 : <p className=' w-full truncate'>{chat.lastMessage}</p>
                             }
                             {
@@ -138,14 +137,26 @@ function ChatList() {
                                     : <p className='text-white text-xs'>{formatDateString(chat.lastMessageTime)}</p>
                                 }
                             </div>
+                            <div className='flex justify-start'>
                             {
                                 chat.lastMessage == null
                                 ? null
                                 : chat.lastMessageSender == users.username
-                                ? <p className='text-white text-sm'>You : {chat.lastMessage}</p>
-                                : <p className='text-white text-sm'>{chat.lastMessageSender} : {chat.lastMessage}</p>
-                                
+                                ? <p className='text-white text-sm inline-block'>You : </p>
+                                : <p className='text-white text-sm inline-block'>{chat.lastMessageSender} : </p>
                             }
+                            <p className='inline-block text-sm text-[#ddd]'>
+                            {
+                                chat.lastMessageType?.includes("image")
+                                ? <div className='flex justify-start '><IoCamera size={19} color='#ddd' className='inline-block'/><pre> </pre> <p className='w-[21rem] truncate'>{chat.lastMessage == "" ? "Photo" : chat.lastMessage }</p></div>
+                                : chat.lastMessageType?.includes("video") 
+                                ? <div className='flex justify-start '><IoVideocam size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-[22rem] truncate'>{chat.lastMessage == "" ? "Video" : chat.lastMessage }</p></div>
+                                : chat.lastMessageType?.includes("application")
+                                ? <div className='flex justify-start'><TiDocumentText size={19} color='#ddd' className='inline-block mt-1'/><pre> </pre> <p className='w-[22rem] truncate'>{chat.lastMessage == "" ? "Document" : chat.lastMessage }</p></div>
+                                : <p className=' w-full truncate'>{chat.lastMessage}</p>
+                            }
+                            </p>
+                            </div>
                         </div>
                     </div>
                     <hr className=" ml-14 border-gray-600 border-t" />

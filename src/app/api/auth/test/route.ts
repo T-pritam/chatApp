@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/db';
 import UserModel, { UserType } from '@/model/User';
+import Group from '@/model/Group';
 
 export async function GET(request: NextRequest) {
     try {
@@ -9,6 +10,7 @@ export async function GET(request: NextRequest) {
 
         // Fetch all users from the database
         const users = await UserModel.find({});
+        const group = await Group.find({});
 
         for (const user of users) {
             // Map each friend ID to an unread message entry with count 0
