@@ -5,7 +5,10 @@ import { MessageSquareMore } from 'lucide-react';
 import { User } from 'lucide-react';
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoSettingsSharp } from "react-icons/io5";
+import { useSelector } from 'react-redux';
+import { RootStateType } from '@/store/userStore';
 import { useState } from 'react';
+import { CldImage } from 'next-cloudinary';
 import { useRouter } from 'next/navigation';
 import { BiSolidMessageAltDetail } from "react-icons/bi";
 import { BiMessageAltDetail } from "react-icons/bi";
@@ -14,6 +17,7 @@ import { MdGroups } from "react-icons/md";
 
 function Options() {
   const router = useRouter()
+  const user = useSelector((state: RootStateType) => state.user);
   const [settingBtnselect, setSettingBtnselect] = useState(false)
   const [messageBtnselect, setMessageBtnselect] = useState(true)
 
@@ -73,7 +77,26 @@ function Options() {
         </span>
         </div>
         <div className='group'>
-          <User size={34} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-700 cursor-pointer' onClick={() => router.push('/profile/details')}/>
+        {user.profileImgUrl 
+  ? (
+    <CldImage
+      src={user.profileImgUrl}
+      width={34} // Match width to User icon size
+      height={34} // Match height to User icon size
+      className="w-[34px] h-[34px] object-cover rounded-full cursor-pointer" // Custom size and style
+      onClick={() => router.push('/profile/details')}
+      alt="profile image"
+    />
+  ) : (
+    <User
+      size={34} // Match icon size
+      strokeWidth={1}
+      color="#bbb"
+      className="rounded-full bg-gray-700 cursor-pointer"
+      onClick={() => router.push('/profile/details')}
+    />
+  )
+}
           <span className="absolute left-24 bottom-4 transform -translate-x-1/2 mt-2 p-1 px-4 rounded-xl bg-[#eee] text-black text-center text-sm z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
             Profile
           </span>

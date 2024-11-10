@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useToast } from "@/hooks/use-toast";
+
 import { useDebounce } from 'use-debounce';
 import axios,{ AxiosError } from 'axios';
 import ApiResponse from '@/schema/apiResponse';
@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react';
 
 export default function Signup() {
+  
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

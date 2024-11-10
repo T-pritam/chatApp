@@ -92,8 +92,7 @@ function MessageBox(props : {
     <div className=''>
       {
         isMediaOpen && (
-          <div
-          className="w-screen h-screen fixed inset-0 bg-gray-800 z-50 p-6"
+          <div className="w-screen h-10/12 fixed inset-0 bg-gray-800 z-50 p-6"
           onClick= { () => setIsMediaOpen(false)}>
           <div className='flex justify-between' onClick={(e) => e.stopPropagation()}>
             <div className='flex gap-3'>
@@ -138,7 +137,7 @@ function MessageBox(props : {
           </div>
         </div>
       ) : (
-        <div ref={props.messageContainerRef} className='bg-gray-700 h-screen p-4 '>
+        <div ref={props.messageContainerRef} className='bg-gray-700 h-10/12 p-4 '>
           {props.messages.map((message, index) => {
             const showDate = index === 0 || !isSameDay(props.messages[index - 1].createdAt, message.createdAt);
             return (

@@ -27,6 +27,7 @@ export function PusherContextProvider({ children }: { children: React.ReactNode 
                 console.log("Pusher Pauyload data cntext : ",data)
                 console.log("Pusher Pauyload data cntext : ",data.groupId)
               dispatch(updateMessage({id : data.groupId,message : data.text,time:new Date().toISOString(),sender : data.senderUsername,lastMessageType: 'data.fileType'}))
+              dispatch(updateUnReadMessageCount({senderId : data.groupId,unreadMessageCount : 1}))
           }})
           return () => {
             channel.unbind('new-messages')

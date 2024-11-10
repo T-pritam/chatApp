@@ -22,6 +22,7 @@ export async function GET(req: Request) {
         const friendMessages = await Promise.all(
         user.friends.map(async (friendId) => {
         const frndId = friendId._id.toString();
+        const frnd = await UserModel.findById(frndId);
         const lastMessage = await Message.findOne({
             $or: [
             { senderId: id, receiverId: friendId },
@@ -38,6 +39,7 @@ export async function GET(req: Request) {
             
         return {
             friendId,
+            profileImage: frnd?.profileImgUrl,
             lastMessageType : lastMessage ? lastMessage.fileType : null,
             lastMessage: lastMessage ? lastMessage.text : null,
             lastMessageTime: lastMessage ? lastMessage.createdAt : null,
@@ -52,9 +54,19 @@ export async function GET(req: Request) {
         const lastMessage = await Message.findOne({ groupId })
           .sort({ createdAt: -1 })
           .exec();
+        const grpId = group?._id.toString();
         const sender = await UserModel.findById(lastMessage?.senderId);
+        const unreadMessageEntryGrp = user.unReadMessages.find(
+          (msg: any) => {
+            return msg.id  === grpId
+          }
+        );
+        console.log(unreadMessageEntryGrp)
+        const unreadMessageCount = unreadMessageEntryGrp ? unreadMessageEntryGrp.count : 0;
         return {
           groupId,
+          unreadMessageCount,
+          profileImage: group?.profileImgUrl,
           lastMessageType : lastMessage ? lastMessage.fileType : null,
           lastMessage: lastMessage ? lastMessage.text : null,
           lastMessageSender: sender?.username,

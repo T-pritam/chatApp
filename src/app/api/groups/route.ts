@@ -6,7 +6,7 @@ export async function GET(req: Request) {
     try{
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    const group = await GroupModel.findById(id).populate("members").populate("createdBy");
+    const group = await GroupModel.findById(id).populate("members","username email profileImgUrl").populate("createdBy","username email profileImgUrl");
     return Response.json({ 
         status: true, 
         message: "Group fetched successfully", 

@@ -8,6 +8,7 @@ interface FriendChat {
     _id: string;
     username: string;
   };
+  profileImage : string | null;
   lastMessageType: string | null;
   lastMessage: string | null;
   lastMessageTime: string | null;
@@ -19,6 +20,7 @@ interface GroupChat {
     _id: string;
     name: string;
   };
+  profileImage : string | null;
   lastMessageType: string | null;
   lastMessageSender: string | null;
   lastMessage: string | null;
@@ -91,6 +93,8 @@ const chatListSlice = createSlice({
         }
         console.log("chat : ",chat?.unreadMessageCount)
       }
+
+      
   },
   extraReducers: (builder) => {
     builder.addCase(fetchChatListById.fulfilled, (state, action) => {

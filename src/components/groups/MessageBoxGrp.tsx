@@ -84,7 +84,7 @@ function MessageBoxGrp(props : {
       {
         isMediaOpen && (
           <div
-          className="w-screen h-screen fixed inset-0 bg-gray-800 z-50 p-6"
+          className="w-screen h-10/12 fixed inset-0 bg-gray-800 z-50 p-6"
           onClick= { () => setIsMediaOpen(false)}>
           <div className='flex justify-between' onClick={(e) => e.stopPropagation()}>
             <div className='flex gap-3'>
@@ -129,7 +129,7 @@ function MessageBoxGrp(props : {
           </div>
         </div>
       ) : (
-        <div ref={props.messageContainerRef} className='bg-gray-700 h-screen p-4 '>
+        <div ref={props.messageContainerRef} className='bg-gray-700 h-10/12 p-4 '>
           {props.messages.map((message, index) => {
             const showDate = index === 0 || !isSameDay(props.messages[index - 1].createdAt, message.createdAt);
             return (
@@ -142,6 +142,11 @@ function MessageBoxGrp(props : {
             {message.fileType == "" || message.fileType == null ? (
             <div key={index} className={`flex ${message.senderId._id === props.userId ? 'justify-end' : 'justify-start'}`}>
               <div className={`inline-block max-w-md break-words bg-opacity-80 px-2 py-1 mb-1 rounded text-white ${message.senderId._id === props.userId ? 'bg-[#005c4b]' : 'bg-gray-500'}`}>
+                {
+                  message.senderId._id !== props.userId ? (
+                    <p className='text-[#ddd] text-sm'>{message.senderId.username}</p>
+                  ) : null
+                }
                 <p className='leading-5 text-base'>{message.text}</p>
                 <p className='flex justify-end text-xs float-right text-[#ddd] mt-0'>{formatTime(message.createdAt)}</p>
               </div>

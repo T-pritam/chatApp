@@ -12,8 +12,7 @@ function Grouplist() {
     const [createBtn2,setCreateBtn2] = useState<boolean>(false)
     const [all,setAll] = useState<boolean>(true)
 
-
-    
+ 
   return (
     <div className=' border border-gray-500 h-screen overflow-y-scroll scrollbar-thin' >
         {
@@ -25,7 +24,6 @@ function Grouplist() {
         {
             createBtn2 && <CreateGroup2 setCreate={setCreateBtn} setAll={setAll} setCreate2={setCreateBtn2}/>
         }     
-        
     </div>
   )
 }

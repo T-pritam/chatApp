@@ -5,7 +5,7 @@ export interface UserType extends Document {
   email: string;
   password: string;
   verifyCode: string;
-  profilePic: string;
+  profileImgUrl: string;
   verifyCodeExpiry: Date; 
   isVerified: boolean;
   unReadMessages: [{id : string,count: number}];
@@ -35,7 +35,7 @@ const UserSchema: Schema<UserType> = new mongoose.Schema({
     type: String,
     required: [true, 'Password is required'],
   },
-  profilePic: {
+  profileImgUrl: {
     type: String,
   },
   unReadMessages: [{ id: String, count: Number }],

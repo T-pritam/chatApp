@@ -13,12 +13,6 @@ import axios from 'axios'
 import { get } from 'http'
 import UserNavbar from '@/components/UserNavbar'
 
-interface usertype{
-    username : string,
-    about : string,
-    email : string
-}
-
 function page({params}:{params :{ id : string }}) 
     {
         const friends = useSelector((state:RootStateType) => state.friends)
@@ -51,10 +45,11 @@ function page({params}:{params :{ id : string }})
                     username={friend.username} 
                     about = {friend.about} 
                     email = {friend.email}
+                    profileImgUrl = {friend.profileImgUrl}
                     setDetails = {setDetails}
                 />
               </div>
-            : <ChatMessage id={friend._id} username={friend.username} about = {friend.about} email = {friend.email} setDetails = {setDetails}/>
+            : <ChatMessage id={friend._id} username={friend.username} about = {friend.about} email = {friend.email} setDetails={setDetails} profileImgUrl={friend.profileImgUrl} />
         }
         </div>
     }

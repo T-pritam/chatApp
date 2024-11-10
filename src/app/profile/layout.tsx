@@ -1,4 +1,4 @@
-import ChatList from '@/components/ChatList';
+"use client"
 import Common from '@/components/Common';
 
 interface RootLayoutProps {

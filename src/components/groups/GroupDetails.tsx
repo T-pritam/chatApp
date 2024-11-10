@@ -2,6 +2,7 @@ import React from 'react'
 import { User2, X } from 'lucide-react';
 import { User } from 'lucide-react';
 import { UserState } from '@/store/userSlice';
+import { CldImage } from 'next-cloudinary';
 
 interface friendDetails{
   name: string,
@@ -11,6 +12,7 @@ interface friendDetails{
   createdBy: UserState,
   createdAt: string
 }
+
 
 const GroupDetails:React.FC<friendDetails> = ({name, description, members, setDetails, createdBy, createdAt}) => {
   return (
@@ -43,7 +45,11 @@ const GroupDetails:React.FC<friendDetails> = ({name, description, members, setDe
                     members.map((member:UserState) => (
                         <div>
                         <div className='flex justify-start py-3 gap-3 hover:bg-gray-500'>
-                        <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
+                        {
+                            member.profileImgUrl != null
+                            ? <CldImage height={200} width={200} src={member.profileImgUrl} alt="profile img" className='h-[48px] w-[48px] object-cover rounded-full cursor-pointer mt-1' />
+                            : <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1'/>
+                        }
                         <div className='w-11/12'>
                             <div className='flex justify-between items-center'>
                                 <p className='text-white text-xl'>{member.username}</p>

@@ -9,6 +9,7 @@ import {store} from "../store/userStore"
 import { Provider } from "react-redux";
 import { useEffect,useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { SessionProvider } from 'next-auth/react';
 import {PusherContextProvider} from '@/context/PusherContextProvider';
 // import { setupPusherConnection } from '@/lib/pusher';
 
@@ -38,12 +39,18 @@ export default function RootLayout({ children }: RootLayoutProps) {
           isAuthRoute ? <div>
             <Provider store={store}>
               <PusherContextProvider>
+                <SessionProvider>
                 {children}
+                </SessionProvider>
               </PusherContextProvider>
             </Provider>
             </div> : <div className="">
             <div className="bg-gray-500 w-1/16 h-screen p-3 float-left inline-block relative">
+            <Provider store={store}>
+              <PusherContextProvider>
             <Options />
+              </PusherContextProvider>
+            </Provider>
           </div>
         </div>
         }
@@ -51,7 +58,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <ToastProvider />
           <Provider store={store}>
             <PusherContextProvider>
+              <SessionProvider>
               {children}
+              </SessionProvider>
             </PusherContextProvider>
           </Provider>
         </body>

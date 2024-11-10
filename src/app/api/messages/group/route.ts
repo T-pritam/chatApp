@@ -2,7 +2,10 @@ import dbConnect from "@/lib/db";
 import MessageModel from "@/model/Message";
 import { v2 as cloudinary } from 'cloudinary';
 import { pusherServer } from "@/lib/pusher";
+import { ObjectId } from "mongoose";
 import UserModel from "@/model/User";
+import { Members } from "pusher-js";
+import Group from "@/model/Group";
 
 cloudinary.config({
     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -59,6 +62,7 @@ export async function POST(req: Request){
             await MessageModel.create({
                 senderId,
                 text,
+                groupId,
                 fileType,
                 fileUrl : Result.public_id,
                 downloadUrl : Result.asset_id
@@ -67,17 +71,26 @@ export async function POST(req: Request){
             downloadUrl = Result.asset_id
         } else{
             await MessageModel.create({
-                senderId,
+                senderId,   
+                groupId,
                 text,
                 fileType,
                 fileUrl,
+                downloadUrl
             })
         }
-        // await UserModel.updateOne(
-        //     { _id: receiverId, 'unReadMessages.id': senderId },
-        //     { $inc: { 'unReadMessages.$.count': 1 } }
-        // );
-
+        const group = await Group.findById(groupId)
+        const memberIds = group.members.filter((userId : ObjectId) => String(userId) !== senderId)
+        console.log(group)
+        console.log(memberIds)
+        await Promise.all(
+            memberIds.map((userId : ObjectId) =>
+              UserModel.updateOne(
+                { _id: userId, "unReadMessages.id": groupId },
+                { $inc: { "unReadMessages.$.count": 1 } }
+              )
+            )
+          );
         pusherServer.trigger("groups", "new-messages", {
             groupId : groupId,
             senderId,
@@ -114,9 +127,14 @@ export async function GET(req: Request){
     try {
         const { searchParams} = new URL(req.url)
         const id = searchParams.get("id")
+        const senderId = searchParams.get("senderId")
         const messages = await MessageModel.find({
             groupId: id
         }).populate("senderId", "username email")
+        await UserModel.updateOne(
+            { _id: senderId, 'unReadMessages.id': id },
+            { $set: { 'unReadMessages.$.count': 0 } }
+        );
         return Response.json({ status: true, message: "Messages fetched successfully", messages })
         
     } catch (error) {
