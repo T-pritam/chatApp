@@ -45,7 +45,6 @@ function page({params}:{params :{ id : string }})
         },[])
   return (
     <div>
-        <h4>{user._id}</h4>
         {
             grp == null
             ? <div>loading</div>

@@ -133,7 +133,8 @@ function ChatList() {
                     ) : "groupId" in chat ? (
                         <div onClick={() => router.push(`/chat/group/${chat.groupId._id}`)}>
                             <div className='flex justify-start p-3 gap-3 hover:bg-gray-500 cursor-pointer'>
-                                <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1' />
+                            <img className='w-[48px] h-[48px] rounded-full bg-gray-500 cursor-pointer object-cover' src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6guKZXlKfEvr8YRdmNDP689aAylzmfk5Ukw&s" alt="" />
+                            {/* <User size={48} strokeWidth={1} color='#bbb' className='rounded-full bg-gray-500 cursor-pointer mt-1' /> */}
                                 <div className='w-5/6'>
                                     <div className='flex justify-between items-center'>
                                         <p className='text-white text-xl'>{chat.groupId.name}</p>

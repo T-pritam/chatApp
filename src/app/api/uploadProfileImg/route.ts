@@ -57,9 +57,9 @@ export async function POST(req: Request) {
     } else {
         const user = await UserModel.findById(userId);
         if (user) {
-            if (user.profileImgUrl != "") {
-                await cloudinary.uploader.destroy(user.profileImgUrl);
-            }
+            // if (user.profileImgUrl != "") {
+            //     await cloudinary.uploader.destroy(user.profileImgUrl);
+            // }
             user.profileImgUrl = Result.public_id;
             await user.save();
         }
