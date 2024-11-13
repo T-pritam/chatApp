@@ -156,9 +156,7 @@ function Details() {
             </div>
             <hr />
 
-            <div className='absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none'>
-            {isCheckingUser && <Loader2 className="animate-spin" size={20} />}
-          </div>
+          {isCheckingUser && <Loader2 className="animate-spin" size={20} />}
           {!isCheckingUser && usernameMessage && (
                     <p
                       className={`text-sm text-left absolute  mt-0 pl-2 ${

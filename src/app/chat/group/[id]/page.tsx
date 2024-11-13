@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 import { RootStateType } from '@/store/userStore'
 import axios from 'axios'
-import { get } from 'http'
 import UserNavbar from '@/components/UserNavbar'
 
 interface groupType{
@@ -18,6 +17,7 @@ interface groupType{
     name : string,
     description : string,
     members : UserState[],
+    admins : UserState[],
     createdBy : UserState,
     createdAt : string
 }
@@ -28,6 +28,7 @@ function page({params}:{params :{ id : string }})
         const user = useSelector((state:RootStateType) => state.user)
         const Router = useRouter()
         const [Details, setDetails] = useState(false)
+        const [members, setMembers] = useState<UserState[]>([])
         const [grp,setGrp] = useState<groupType | null>(null)
         useEffect(() => {
             if(!localStorage.getItem('token') || user._id == ""){
@@ -37,6 +38,7 @@ function page({params}:{params :{ id : string }})
                 const response = await axios.get(`/api/groups?id=${params.id}`)
                 if(response.data.status){
                     setGrp(response.data.group)
+                    setMembers(response.data.members)
                 } else {
                     Router.push(`/chat`)
                 }
@@ -57,6 +59,8 @@ function page({params}:{params :{ id : string }})
                     name={grp.name} 
                     description = {grp.description} 
                     members = {grp.members}
+                    admins = {grp.admins}
+                    member = {members}
                     setDetails = {setDetails}
                     createdBy = {grp.createdBy}
                     createdAt = {grp.createdAt}

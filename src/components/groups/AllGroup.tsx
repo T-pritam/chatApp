@@ -110,7 +110,6 @@ function AllGroup(props : {
                     </div>
                 ))
             }
-            
         </div>
         
         
