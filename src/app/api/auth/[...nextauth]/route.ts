@@ -20,8 +20,9 @@ export const authOptions: NextAuthOptions = {
       if (account && profile) {
         token.email = profile.email;
         token.name = profile.name;
-        token.image = (profile as any).picture;  // Store user profile picture URL
+        token.image = (profile as any).picture;
       }
+      console.log('Generated JWT token:', token);
       return token;  // Return the token to save in session
     },
     // Pass JWT token into session to provide user data on the frontend
